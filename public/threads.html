@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Threads</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Threads</h1>
+        <p>Continuing lines of thought</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html" class="active">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html">Me</a>
+    </nav>
+
+    <main>
+        <section class="capture">
+            <h2>Create a Thread</h2>
+            <input type="text" id="threadTitle" placeholder="Thread title..." />
+            <textarea id="threadDescription" placeholder="Description (optional)"></textarea>
+            <button id="createThreadButton">Create Thread</button>
+            <p id="threadFeedback"></p>
+        </section>
+
+        <section class="thoughts-history">
+            <h2>Your Threads</h2>
+            <div id="threadsList">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/js/threads.js"></script>
+</body>
+</html>

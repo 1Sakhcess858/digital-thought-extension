@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Future Me</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Future Me</h1>
+        <p>Messages to your future self</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html" class="active">Future Me</a>
+        <a href="/me.html">Me</a>
+    </nav>
+
+    <main>
+        <section class="capture">
+            <h2>Write a Message</h2>
+            <textarea id="futureMessage" placeholder="Write a message to your future self..."></textarea>
+            <label for="futureUnlockDate">Unlock date:</label>
+            <input type="date" id="futureUnlockDate" />
+            <button id="futureSaveButton">Save Message</button>
+            <p id="futureFeedback"></p>
+        </section>
+
+        <section class="thoughts-history">
+            <h2>Your Messages</h2>
+            <div id="futureList">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/js/future.js"></script>
+</body>
+</html>

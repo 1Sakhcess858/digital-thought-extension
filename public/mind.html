@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Mind</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Mind</h1>
+        <p>Capture your thoughts</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/mind.html" class="active">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html">Me</a>
+    </nav>
+
+    <main>
+        <section class="capture">
+            <h2>🧠 What's on your mind?</h2>
+
+            <select id="captureType">
+                <option value="Thought">Thought</option>
+                <option value="Idea">Idea</option>
+                <option value="Question">Question</option>
+                <option value="Lesson">Lesson</option>
+                <option value="Reflection">Reflection</option>
+                <option value="Goal">Goal</option>
+            </select>
+
+            <textarea id="captureInput" placeholder="Type your thought..."></textarea>
+            <button id="captureButton">Capture</button>
+            <p id="captureFeedback"></p>
+        </section>
+
+        <section class="thoughts-history">
+            <h2>Recent Thoughts</h2>
+            <div id="thoughtsList">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/mind.js"></script>
+</body>
+</html>

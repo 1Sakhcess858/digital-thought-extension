@@ -1,0 +1,445 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: #333;
+}
+
+header p {
+    font-size: 14px;
+    color: #888;
+}
+
+.capture {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.capture h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+#captureInput {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+}
+
+#captureInput:focus {
+    border-color: #888;
+}
+
+#captureButton {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#captureButton:hover {
+    background: #555;
+}
+
+.status {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+}
+/* Navigation */
+nav {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    padding: 12px 0;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+nav a {
+    text-decoration: none;
+    color: #555;
+    font-size: 13px;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+nav a:hover {
+    background: #f0f0f0;
+    color: #222;
+}
+
+nav a.active {
+    color: #222;
+    font-weight: 600;
+}
+/* Capture form */
+#captureType {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-family: inherit;
+}
+
+#captureFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+/* Thoughts history */
+.thoughts-history {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.thoughts-history h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.thought-card {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.thought-card:last-child {
+    border-bottom: none;
+}
+
+.thought-type {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.thought-content {
+    font-size: 15px;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.thought-date {
+    font-size: 12px;
+    color: #aaa;
+}
+/* Thread input */
+#threadTitle {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    font-family: inherit;
+}
+
+#threadDescription {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+#threadFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+
+.thought-card h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #222;
+}
+/* Remember Why */
+.remember-why {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.remember-why h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.remember-why p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.remember-why button {
+    padding: 8px 16px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.remember-why button:hover {
+    background: #555;
+}
+
+#whyInput {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+/* Echo */
+.echo {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.echo h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.echo p {
+    font-size: 16px;
+    color: #555;
+    font-style: italic;
+}
+
+#echoInput {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+#echoFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+/* Reflection */
+.reflection {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.reflection h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.reflection p {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+#reflectionInput {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+#reflectionFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+/* Goals form */
+#goalTitle {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    font-family: inherit;
+}
+
+#goalWhy,
+#goalNextAction {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+#goalFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+/* Future Me */
+#futureMessage {
+    width: 100%;
+    min-height: 90px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+#futureUnlockDate {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
+}
+
+#futureFeedback {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2a7d2a;
+    min-height: 20px;
+}
+
+.future-response {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.future-response button {
+    padding: 6px 12px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.future-response button:hover {
+    background: #555;
+}
+/* Greeting */
+.greeting {
+    margin-bottom: 20px;
+}
+
+.greeting h2 {
+    font-size: 22px;
+    color: #222;
+}
+
+/* Active thread */
+.active-thread {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.active-thread h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.active-thread p {
+    font-size: 15px;
+    color: #555;
+}

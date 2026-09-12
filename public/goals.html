@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Goals</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Goals</h1>
+        <p>What you are working toward</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html" class="active">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html">Me</a>
+    </nav>
+
+    <main>
+        <section class="capture">
+            <h2>Create a Goal</h2>
+            <input type="text" id="goalTitle" placeholder="Goal title..." />
+            <textarea id="goalWhy" placeholder="Why does this matter to you?"></textarea>
+            <textarea id="goalNextAction" placeholder="Next action..."></textarea>
+            <button id="goalSaveButton">Save Goal</button>
+            <p id="goalFeedback"></p>
+        </section>
+
+        <section class="thoughts-history">
+            <h2>Your Goals</h2>
+            <div id="goalsList">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/js/goals.js"></script>
+</body>
+</html>

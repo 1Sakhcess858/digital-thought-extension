@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Me</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Me</h1>
+        <p>Settings and Echoes</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html" class="active">Me</a>
+    </nav>
+
+    <main>
+        <section class="capture">
+            <h2>Create an Echo</h2>
+            <textarea id="echoInput" placeholder="Write a short message to see again..."></textarea>
+            <button id="echoSaveButton">Save Echo</button>
+            <p id="echoFeedback"></p>
+        </section>
+
+        <section class="thoughts-history">
+            <h2>Your Echoes</h2>
+            <div id="echoesList">Loading...</div>
+        </section>
+    </main>
+
+    <script src="/js/me.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Home</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>D.T.E.</h1>
+        <p>Digital Thought Extension</p>
+    </header>
+
+    <nav>
+        <a href="/" class="active">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html">Me</a>
+    </nav>
+
+    <main>
+        <section class="greeting">
+            <h2 id="greetingText">Hello.</h2>
+        </section>
+
+        <section class="remember-why">
+            <h2>Remember Why</h2>
+            <p id="whyDisplay">You haven't written your WHY yet.</p>
+            <button id="whyEditButton">Edit</button>
+            <div id="whyEditForm" style="display:none;">
+                <textarea id="whyInput" placeholder="Write your WHY here..."></textarea>
+                <button id="whySaveButton">Save</button>
+            </div>
+        </section>
+
+        <section class="echo">
+            <h2>Echo</h2>
+            <p id="echoDisplay">No Echoes yet. Create one in the Me tab.</p>
+        </section>
+
+        <section class="active-thread">
+            <h2>Active Thread</h2>
+            <p id="activeThreadDisplay">No threads yet. Create one in the Threads tab.</p>
+        </section>
+
+        <section class="reflection">
+            <h2>Today's Reflection</h2>
+            <p>What stood out today?</p>
+            <textarea id="reflectionInput" placeholder="Write your reflection..."></textarea>
+            <button id="reflectionSaveButton">Save Reflection</button>
+            <p id="reflectionFeedback"></p>
+        </section>
+
+        <section class="capture">
+            <h2>🧠 What's on your mind?</h2>
+            <textarea id="captureInput" placeholder="Type your thought..."></textarea>
+            <button id="captureButton">Capture</button>
+            <p id="captureFeedback"></p>
+        </section>
+    </main>
+
+    <script src="/js/home.js"></script>
+</body>
+</html>
