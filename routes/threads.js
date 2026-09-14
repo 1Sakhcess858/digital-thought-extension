@@ -13,7 +13,12 @@ router.post('/', (req, res) => {
     if (!title) {
         return res.status(400).json({ error: 'Title is required.' });
     }
-
+    if (title.length > 200) {
+        return res.status(400).json({ error: 'Title too long (max 200 characters).' });
+    }
+    if (description && description.length > 2000) {
+        return res.status(400).json({ error: 'Description too long (max 2000 characters).' });
+    }
     const sql = 'INSERT INTO threads (title, description) VALUES (?, ?)';
     db.run(sql, [title, description || ''], function (err) {
         if (err) {

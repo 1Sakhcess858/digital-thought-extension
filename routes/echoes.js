@@ -13,7 +13,9 @@ router.post('/', (req, res) => {
     if (!content) {
         return res.status(400).json({ error: 'Content is required.' });
     }
-
+    if (content.length > 500) {
+        return res.status(400).json({ error: 'Echo too long (max 500 characters).' });
+    }
     const sql = 'INSERT INTO echoes (content) VALUES (?)';
     db.run(sql, [content], function (err) {
         if (err) {

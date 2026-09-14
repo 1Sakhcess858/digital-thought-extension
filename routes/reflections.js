@@ -13,7 +13,9 @@ router.post('/', (req, res) => {
     if (!content) {
         return res.status(400).json({ error: 'Content is required.' });
     }
-
+    if (content.length > 10000) {
+        return res.status(400).json({ error: 'Content too long (max 10000 characters).' });
+    }
     const sql = 'INSERT INTO reflections (content) VALUES (?)';
     db.run(sql, [content], function (err) {
         if (err) {

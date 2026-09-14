@@ -13,6 +13,12 @@ router.post('/', (req, res) => {
     if (!message || !unlock_date) {
         return res.status(400).json({ error: 'Message and unlock date are required.' });
     }
+    if (message.length > 10000) {
+        return res.status(400).json({ error: 'Message too long (max 10000 characters).' });
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(unlock_date)) {
+        return res.status(400).json({ error: 'Unlock date must be in YYYY-MM-DD format.' });
+    }
 
     const sql = 'INSERT INTO future_messages (message, unlock_date) VALUES (?, ?)';
     db.run(sql, [message, unlock_date], function (err) {
@@ -36,16 +42,26 @@ router.get('/', (req, res) => {
 
 // PUT: Save a response
 router.put('/:id', (req, res) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'Invalid message id.' });
+    }
+
     const { response } = req.body;
+
+    if (response && response.length > 10000) {
+        return res.status(400).json({ error: 'Response too long (max 10000 characters).' });
+    }
 
     const sql = 'UPDATE future_messages SET response = ? WHERE id = ?';
     db.run(sql, [response, id], function (err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Message not found.' });
+        }
         res.json({ success: true });
     });
 });
-
 module.exports = router;

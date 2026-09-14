@@ -18,6 +18,9 @@ router.post('/', (req, res) => {
     if (!ALLOWED_TYPES.includes(type)) {
         return res.status(400).json({ error: 'Invalid type.' });
     }
+    if (content.length > 10000) {
+        return res.status(400).json({ error: 'Content too long (max 10000 characters).' });
+    }
 
     const sql = 'INSERT INTO thoughts (type, content, thread_id) VALUES (?, ?, ?)';
     db.run(sql, [type, content, thread_id || null], function (err) {
@@ -93,9 +96,12 @@ router.patch('/:id', (req, res) => {
     const fields = [];
     const values = [];
 
-    if (content !== undefined) {
+        if (content !== undefined) {
         if (!content || !content.trim()) {
             return res.status(400).json({ error: 'Content cannot be empty.' });
+        }
+        if (content.length > 10000) {
+            return res.status(400).json({ error: 'Content too long (max 10000 characters).' });
         }
         fields.push('content = ?');
         values.push(content);

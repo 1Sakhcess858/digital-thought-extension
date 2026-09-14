@@ -25,7 +25,12 @@ router.post('/', (req, res) => {
     if (!key) {
         return res.status(400).json({ error: 'Key is required.' });
     }
-
+    if (key.length > 100) {
+        return res.status(400).json({ error: 'Key too long (max 100 characters).' });
+    }
+    if (value && value.length > 10000) {
+        return res.status(400).json({ error: 'Value too long (max 10000 characters).' });
+    }
     const sql = `
         INSERT INTO settings (key, value) VALUES (?, ?)
         ON CONFLICT(key) DO UPDATE SET value = excluded.value
