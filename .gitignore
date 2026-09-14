@@ -3,4 +3,3 @@ database.db
 .env
 schema-dump.js
 migrate-add-deleted-at.js
-schema-dump.js
