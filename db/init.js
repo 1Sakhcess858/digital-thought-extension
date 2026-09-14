@@ -5,13 +5,14 @@ const dbPath = path.join(__dirname, '..', 'database.db');
 const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
-    db.run(`
+        db.run(`
         CREATE TABLE IF NOT EXISTS thoughts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             type TEXT NOT NULL,
             content TEXT NOT NULL,
             thread_id INTEGER,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deleted_at DATETIME DEFAULT NULL
         )
     `);
 

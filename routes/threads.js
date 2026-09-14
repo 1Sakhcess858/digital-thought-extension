@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
             threads.created_at,
             COUNT(thoughts.id) AS thought_count
         FROM threads
-        LEFT JOIN thoughts ON thoughts.thread_id = threads.id
+               LEFT JOIN thoughts ON thoughts.thread_id = threads.id AND thoughts.deleted_at IS NULL
         GROUP BY threads.id
         ORDER BY threads.created_at DESC
     `;
