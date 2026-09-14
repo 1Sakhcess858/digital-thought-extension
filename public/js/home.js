@@ -70,6 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { echoDisplay.textContent = 'Server not responding.'; });
     }
 
+    function loadThreadOptions() {
+        const select = document.getElementById('captureThread');
+        if (!select) return;
+        fetch('/api/threads')
+            .then(r => r.json())
+            .then(threads => {
+                threads.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = t.title;
+                    select.appendChild(opt);
+                });
+            })
+            .catch(() => { });
+    }
+
     function loadActiveThread() {
         fetch('/api/threads')
             .then(r => r.json())
@@ -120,10 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 captureFeedback.style.color = '#b33';
                 return;
             }
+
+            const threadSelect = document.getElementById('captureThread');
+            const threadId = threadSelect && threadSelect.value
+                ? parseInt(threadSelect.value, 10)
+                : null;
+
             fetch('/api/thoughts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'Thought', content })
+                body: JSON.stringify({ type: 'Thought', content, thread_id: threadId })
             })
                 .then(r => r.json())
                 .then(data => {
@@ -134,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         captureFeedback.textContent = 'Captured.';
                         captureFeedback.style.color = '#2a7d2a';
                         captureInput.value = '';
+                        if (threadSelect) threadSelect.value = '';
                     }
                 });
         });
@@ -142,5 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setGreeting();
     loadWhy();
     loadEcho();
+    loadThreadOptions();
     loadActiveThread();
 });

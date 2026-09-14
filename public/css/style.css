@@ -443,3 +443,8 @@ nav a.active {
     font-size: 15px;
     color: #555;
 }
+.thought-thread {
+    font-size: 0.85em;
+    color: #777;
+    margin-left: 8px;
+}

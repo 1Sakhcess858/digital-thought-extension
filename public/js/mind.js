@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 thoughtsList.innerHTML = thoughts.map(thought => `
-                    <div class="thought-card">
+                                        <div class="thought-card">
                         <span class="thought-type">${thought.type}</span>
+                        ${thought.thread_title ? `<span class="thought-thread">→ ${escapeHtml(thought.thread_title)}</span>` : ''}
                         <p class="thought-content">${escapeHtml(thought.content)}</p>
                         <span class="thought-date">${thought.created_at}</span>
                     </div>
