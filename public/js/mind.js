@@ -2,11 +2,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const thoughtsList = document.getElementById('thoughtsList');
     const ALLOWED_TYPES = ['Thought', 'Idea', 'Question', 'Lesson', 'Reflection', 'Goal'];
 
-    let threads = [];          // cached thread list
+        let threads = [];          // cached thread list
+    let allThoughts = [];      // cached full list of thoughts
+    let currentFilter = '';    // current search text
     let editingId = null;      // id of the currently edited thought
     let originalData = null;   // original data of the currently edited thought
+        init();
+    setupSearch();
 
-    init();
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+        searchInput.addEventListener('input', () => {
+            currentFilter = searchInput.value;
+            if (editingId !== null) {
+                exitEditMode();
+            }
+            renderFiltered();
+        });
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                currentFilter = '';
+                renderFiltered();
+            }
+        });
+    }
 
     function init() {
         loadThreads().then(loadThoughts);
@@ -22,20 +43,36 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { threads = []; });
     }
 
-    function loadThoughts() {
+        function loadThoughts() {
         fetch('/api/thoughts')
             .then(r => r.json())
             .then(thoughts => {
-                if (!Array.isArray(thoughts) || thoughts.length === 0) {
-                    thoughtsList.innerHTML = '<p>No thoughts yet. Start capturing.</p>';
-                    return;
-                }
-                thoughtsList.innerHTML = thoughts.map(cardFor).join('');
-                attachHandlers();
+                allThoughts = Array.isArray(thoughts) ? thoughts : [];
+                renderFiltered();
             })
             .catch(() => {
                 thoughtsList.innerHTML = '<p>Server not responding.</p>';
             });
+    }
+
+    function renderFiltered() {
+        if (allThoughts.length === 0) {
+            thoughtsList.innerHTML = '<p>No thoughts yet. Start capturing.</p>';
+            return;
+        }
+
+        const query = currentFilter.trim().toLowerCase();
+        const visible = query
+            ? allThoughts.filter(t => t.content.toLowerCase().includes(query))
+            : allThoughts;
+
+        if (visible.length === 0) {
+            thoughtsList.innerHTML = '<p>No thoughts match your search.</p>';
+            return;
+        }
+
+        thoughtsList.innerHTML = visible.map(cardFor).join('');
+        attachHandlers();
     }
 
     // ---------- rendering ----------
@@ -98,8 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function enterEditMode(id) {
-        const card = thoughtsList.querySelector(`.thought-card[data-id="${id}"]`);
-        if (!card) return;
+                       const card = thoughtsList.querySelector(`.thought-card[data-id="${id}"]`);
+                if (card) card.remove();
+                editingId = null;
+                originalData = null;
+                allThoughts = allThoughts.filter(t => t.id !== id);
 
         // Save original data for change detection and for restoring
         const typeEl = card.querySelector('.thought-type');
@@ -107,14 +147,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateEl = card.querySelector('.thought-date');
         const threadEl = card.querySelector('.thought-thread');
 
-        originalData = {
-            id,
-            type: typeEl ? typeEl.textContent : 'Thought',
-            content: contentEl ? contentEl.textContent : '',
-            created_at: dateEl ? dateEl.textContent : '',
-            thread_id: null,
-            thread_title: threadEl ? threadEl.textContent.replace('→ ', '') : null
-        };
+                       originalData = {
+                    id,
+                    type,
+                    content,
+                    created_at: originalData.created_at,
+                    thread_id,
+                    thread_title: thread_id
+                        ? (threads.find(t => t.id === thread_id) || {}).title || null
+                        : null
+                };
+                const idx = allThoughts.findIndex(t => t.id === id);
+                if (idx !== -1) {
+                    allThoughts[idx] = {
+                        ...allThoughts[idx],
+                        type,
+                        content,
+                        thread_id,
+                        thread_title: originalData.thread_title
+                    };
+                }
+                card.outerHTML = cardFor(originalData);
 
         // Find original thread_id by matching title
         if (originalData.thread_title) {
