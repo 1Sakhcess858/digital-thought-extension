@@ -2,12 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const thoughtsList = document.getElementById('thoughtsList');
     const ALLOWED_TYPES = ['Thought', 'Idea', 'Question', 'Lesson', 'Reflection', 'Goal'];
 
-        let threads = [];          // cached thread list
-    let allThoughts = [];      // cached full list of thoughts
-    let currentFilter = '';    // current search text
-    let editingId = null;      // id of the currently edited thought
-    let originalData = null;   // original data of the currently edited thought
-        init();
+    let threads = [];
+    let allThoughts = [];
+    let currentFilter = '';
+    let editingId = null;
+    let originalData = null;
+
+    init();
     setupSearch();
 
     function setupSearch() {
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { threads = []; });
     }
 
-        function loadThoughts() {
+    function loadThoughts() {
         fetch('/api/thoughts')
             .then(r => r.json())
             .then(thoughts => {
@@ -135,41 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function enterEditMode(id) {
-                       const card = thoughtsList.querySelector(`.thought-card[data-id="${id}"]`);
-                if (card) card.remove();
-                editingId = null;
-                originalData = null;
-                allThoughts = allThoughts.filter(t => t.id !== id);
+        const card = thoughtsList.querySelector(`.thought-card[data-id="${id}"]`);
+        if (!card) return;
 
-        // Save original data for change detection and for restoring
         const typeEl = card.querySelector('.thought-type');
         const contentEl = card.querySelector('.thought-content');
         const dateEl = card.querySelector('.thought-date');
         const threadEl = card.querySelector('.thought-thread');
 
-                       originalData = {
-                    id,
-                    type,
-                    content,
-                    created_at: originalData.created_at,
-                    thread_id,
-                    thread_title: thread_id
-                        ? (threads.find(t => t.id === thread_id) || {}).title || null
-                        : null
-                };
-                const idx = allThoughts.findIndex(t => t.id === id);
-                if (idx !== -1) {
-                    allThoughts[idx] = {
-                        ...allThoughts[idx],
-                        type,
-                        content,
-                        thread_id,
-                        thread_title: originalData.thread_title
-                    };
-                }
-                card.outerHTML = cardFor(originalData);
+        originalData = {
+            id,
+            type: typeEl ? typeEl.textContent : 'Thought',
+            content: contentEl ? contentEl.textContent : '',
+            created_at: dateEl ? dateEl.textContent : '',
+            thread_id: null,
+            thread_title: threadEl ? threadEl.textContent.replace('→ ', '') : null
+        };
 
-        // Find original thread_id by matching title
         if (originalData.thread_title) {
             const match = threads.find(t => t.title === originalData.thread_title);
             if (match) originalData.thread_id = match.id;
@@ -241,8 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Error: ' + data.error);
                     return;
                 }
-                // Update originalData with new values and return to display mode
-                originalData = {
+                const updated = {
                     id,
                     type,
                     content,
@@ -252,7 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? (threads.find(t => t.id === thread_id) || {}).title || null
                         : null
                 };
-                card.outerHTML = cardFor(originalData);
+                const idx = allThoughts.findIndex(t => t.id === id);
+                if (idx !== -1) allThoughts[idx] = updated;
+                card.outerHTML = cardFor(updated);
                 editingId = null;
                 originalData = null;
                 attachHandlers();
@@ -277,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (card) card.remove();
                 editingId = null;
                 originalData = null;
+                allThoughts = allThoughts.filter(t => t.id !== id);
                 if (!thoughtsList.querySelector('.thought-card')) {
                     thoughtsList.innerHTML = '<p>No thoughts yet. Start capturing.</p>';
                 }
