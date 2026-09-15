@@ -4,6 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const captureButton = document.getElementById('captureButton');
     const captureType = document.getElementById('captureType');
     const captureFeedback = document.getElementById('captureFeedback');
+    function loadThreadOptions() {
+        const select = document.getElementById('captureThread');
+        if (!select) return;
+        fetch('/api/threads')
+            .then(r => r.json())
+            .then(threads => {
+                threads.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = t.title;
+                    select.appendChild(opt);
+                });
+            })
+            .catch(() => { });
+    }
+
+
 
     // Check server status
     if (statusMessage) {
@@ -29,10 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+                        const threadSelect = document.getElementById('captureThread');
+            const threadId = threadSelect && threadSelect.value
+                ? parseInt(threadSelect.value, 10)
+                : null;
+
             fetch('/api/thoughts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type, content })
+                body: JSON.stringify({ type, content, thread_id: threadId })
             })
                 .then(response => response.json())
                 .then(data => {
@@ -40,15 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         captureFeedback.textContent = 'Error: ' + data.error;
                         captureFeedback.style.color = '#b33';
                     } else {
-                        captureFeedback.textContent = 'Captured.';
+                                               captureFeedback.textContent = 'Captured.';
                         captureFeedback.style.color = '#2a7d2a';
                         captureInput.value = '';
+                        if (threadSelect) threadSelect.value = '';
                     }
                 })
                 .catch(() => {
                     captureFeedback.textContent = 'Server not responding.';
                     captureFeedback.style.color = '#b33';
                 });
-        });
+              });
     }
+
+    loadThreadOptions();
 });
