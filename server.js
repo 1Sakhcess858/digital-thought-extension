@@ -16,6 +16,7 @@ const settingsRoute = require('./routes/settings');
 const echoesRoute = require('./routes/echoes');
 const reflectionsRoute = require('./routes/reflections');
 const goalsRoute = require('./routes/goals');
+const commitmentsRoute = require('./routes/commitments');
 const futureRoute = require('./routes/future');
 const promptsRoute = require('./routes/prompts');
 
@@ -27,6 +28,7 @@ app.use('/api/reflections', reflectionsRoute);
 app.use('/api/goals', goalsRoute);
 app.use('/api/future', futureRoute);
 app.use('/api/prompts', promptsRoute);
+app.use('/api/commitments', commitmentsRoute);
 
 app.get('/api/status', (req, res) => {
     res.json({ status: 'D.T.E. is running' });

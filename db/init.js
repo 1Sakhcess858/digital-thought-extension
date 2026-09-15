@@ -95,7 +95,31 @@ db.serialize(() => {
         )
     `);
 
-    console.log('Database initialized with all 9 tables.');
+    db.run(`
+        CREATE TABLE IF NOT EXISTS commitments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
+            horizon TEXT NOT NULL,
+            why TEXT,
+            goal_id INTEGER,
+            due_date TEXT,
+            status TEXT DEFAULT 'open',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            completed_at DATETIME,
+            deleted_at DATETIME DEFAULT NULL
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS commitment_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            commitment_id INTEGER NOT NULL,
+            event TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    console.log('Database initialized with all 11 tables.');
 });
 
 db.close();
