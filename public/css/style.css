@@ -647,3 +647,108 @@ nav a.active {
 .btn-cancel:hover {
     background: #e2e2e2;
 }
+/* ---------- Phase 6B: Commitments ---------- */
+
+.commitment-horizon {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.horizon-btn {
+    padding: 4px 10px;
+    font-size: 0.9em;
+    background: #f1efe8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #444;
+}
+
+.horizon-btn.active {
+    background: #5b7a5b;
+    color: white;
+    border-color: #5b7a5b;
+}
+
+.commitment-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.commitment-done {
+    background: none;
+    border: 1px solid #999;
+    border-radius: 3px;
+    width: 22px;
+    height: 22px;
+    line-height: 1;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    flex-shrink: 0;
+    color: #555;
+}
+
+.commitment-done:hover {
+    background: #f1efe8;
+}
+
+.commitment-body {
+    flex: 1;
+}
+
+.commitment-text {
+    margin: 0;
+    color: #2a2a28;
+}
+
+.commitment-why {
+    margin: 2px 0 0 0;
+    color: #777;
+    font-size: 0.85em;
+    font-style: italic;
+}
+
+.commitment-add {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.commitment-add input,
+.commitment-add select {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95em;
+}
+
+#commitmentText {
+    flex: 2;
+    min-width: 180px;
+}
+
+#commitmentWhy {
+    flex: 1;
+    min-width: 120px;
+}
+
+#commitmentAddButton {
+    padding: 6px 14px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#commitmentAddButton:hover {
+    background: #4a664a;
+}
