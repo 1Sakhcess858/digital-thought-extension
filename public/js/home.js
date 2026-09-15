@@ -13,6 +13,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const captureInput = document.getElementById('captureInput');
     const captureButton = document.getElementById('captureButton');
     const captureFeedback = document.getElementById('captureFeedback');
+    const momentPrompt = document.getElementById('momentPrompt');
+    const momentInput = document.getElementById('momentInput');
+    const momentSaveButton = document.getElementById('momentSaveButton');
+    const momentSkipButton = document.getElementById('momentSkipButton');
+    const momentFeedback = document.getElementById('momentFeedback');
+
+    let currentPrompt = null;
+
+        function loadMoment() {
+        fetch('/api/prompts/current')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.prompts || data.prompts.length === 0) {
+                    momentPrompt.textContent = 'No prompt for this time of day.';
+                    momentInput.style.display = 'none';
+                    momentSaveButton.style.display = 'none';
+                    momentSkipButton.style.display = 'none';
+                    return;
+                }
+                currentPrompt = data.prompts[0];
+                momentPrompt.textContent = currentPrompt.text;
+            })
+            .catch(() => {
+                momentPrompt.textContent = 'Server not responding.';
+                momentInput.style.display = 'none';
+                momentSaveButton.style.display = 'none';
+                momentSkipButton.style.display = 'none';
+            });
+    }
+
+    function saveMoment() {
+        if (!currentPrompt) return;
+        const response = momentInput.value.trim();
+        if (!response) {
+            momentFeedback.textContent = 'Write something first, or press Skip.';
+            momentFeedback.style.color = '#b33';
+            return;
+        }
+        fetch('/api/prompts/responses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt_id: currentPrompt.id, response })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    momentFeedback.textContent = 'Error: ' + data.error;
+                    momentFeedback.style.color = '#b33';
+                    return;
+                }
+                momentFeedback.textContent = 'Saved.';
+                momentFeedback.style.color = '#2a7d2a';
+                momentInput.value = '';
+            })
+            .catch(() => {
+                momentFeedback.textContent = 'Server not responding.';
+                momentFeedback.style.color = '#b33';
+            });
+    }
+
+    function skipMoment() {
+        if (!currentPrompt) return;
+        fetch('/api/prompts/responses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt_id: currentPrompt.id, skipped: true })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    momentFeedback.textContent = 'Error: ' + data.error;
+                    momentFeedback.style.color = '#b33';
+                    return;
+                }
+                momentFeedback.textContent = 'Skipped.';
+                momentFeedback.style.color = '#777';
+                momentInput.value = '';
+            })
+            .catch(() => {
+                momentFeedback.textContent = 'Server not responding.';
+                momentFeedback.style.color = '#b33';
+            });
+    }
+
+    if (momentSaveButton) {
+        momentSaveButton.addEventListener('click', saveMoment);
+    }
+    if (momentSkipButton) {
+        momentSkipButton.addEventListener('click', skipMoment);
+    }
 
     function setGreeting() {
         const hour = new Date().getHours();
@@ -162,7 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    setGreeting();
+       setGreeting();
+    loadMoment();
     loadWhy();
     loadEcho();
     loadThreadOptions();

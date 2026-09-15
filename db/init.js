@@ -16,7 +16,7 @@ db.serialize(() => {
         )
     `);
 
-        db.run(`
+    db.run(`
         CREATE TABLE IF NOT EXISTS threads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -71,7 +71,31 @@ db.serialize(() => {
         )
     `);
 
-    console.log('Database initialized with all 7 tables.');
+    db.run(`
+        CREATE TABLE IF NOT EXISTS prompts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            time_of_day TEXT NOT NULL,
+            text TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS prompt_responses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            prompt_id INTEGER NOT NULL,
+            prompt_text TEXT NOT NULL,
+            response TEXT,
+            time_of_day TEXT NOT NULL,
+            skipped INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deleted_at DATETIME DEFAULT NULL
+        )
+    `);
+
+    console.log('Database initialized with all 9 tables.');
 });
 
 db.close();

@@ -33,6 +33,25 @@
             <h2>Your Echoes</h2>
             <div id="echoesList">Loading...</div>
         </section>
+
+        <section class="prompts-history">
+            <h2>Prompt History</h2>
+            <div class="prompt-filter">
+                <button class="filter-btn active" data-bucket="">All</button>
+                <button class="filter-btn" data-bucket="morning">Morning</button>
+                <button class="filter-btn" data-bucket="afternoon">Afternoon</button>
+                <button class="filter-btn" data-bucket="evening">Evening</button>
+                <button class="filter-btn" data-bucket="night">Night</button>
+            </div>
+            <div id="promptsHistory">Loading...</div>
+            <button id="togglePromptEditor">Edit Prompts</button>
+        </section>
+
+        <section class="prompts-editor" id="promptsEditor" style="display:none;">
+            <h2>Edit Prompts</h2>
+            <p class="hint">Change the text of any prompt. Changes apply immediately.</p>
+            <div id="promptsEditorList">Loading...</div>
+        </section>
     </main>
 
     <script src="/js/me.js"></script>

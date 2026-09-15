@@ -530,3 +530,120 @@ nav a.active {
 .btn-delete:hover {
     background: #992222;
 }
+/* ---------- Phase 6A: Moment + Prompt History + Editor ---------- */
+
+.moment-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.prompt-filter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.filter-btn {
+    padding: 4px 10px;
+    font-size: 0.9em;
+    background: #f1efe8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #444;
+}
+
+.filter-btn.active {
+    background: #5b7a5b;
+    color: white;
+    border-color: #5b7a5b;
+}
+
+.prompt-question {
+    font-style: italic;
+    color: #555;
+    margin: 6px 0 4px 0;
+    font-size: 0.95em;
+}
+
+#togglePromptEditor {
+    margin-top: 12px;
+    padding: 6px 14px;
+    background: transparent;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#togglePromptEditor:hover {
+    background: #f1efe8;
+}
+
+.prompts-editor .hint {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.prompt-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.prompt-edit-row.inactive {
+    opacity: 0.55;
+}
+
+.prompt-edit-bucket {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    color: #5b7a5b;
+    min-width: 80px;
+}
+
+.prompt-edit-input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.prompt-edit-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.prompt-edit-actions button {
+    padding: 4px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.btn-save {
+    background: #2a7d2a;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #226622;
+}
+
+.btn-cancel {
+    background: #eee;
+    color: #333;
+    border-color: #ccc;
+}
+
+.btn-cancel:hover {
+    background: #e2e2e2;
+}
