@@ -37,6 +37,29 @@
             <p id="momentFeedback"></p>
         </section>
 
+        <section class="commitments" id="commitmentsSection">
+            <h2>Commitments</h2>
+            <div class="commitment-horizon">
+                <button class="horizon-btn active" data-horizon="today">Today</button>
+                <button class="horizon-btn" data-horizon="week">This Week</button>
+                <button class="horizon-btn" data-horizon="month">This Month</button>
+                <button class="horizon-btn" data-horizon="year">This Year</button>
+            </div>
+            <div id="commitmentsList">Loading...</div>
+            <div class="commitment-add">
+                <input type="text" id="commitmentText" placeholder="What are you committing to?" />
+                <input type="text" id="commitmentWhy" placeholder="Why? (optional)" />
+                <select id="commitmentHorizonSelect">
+                    <option value="day">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="year">This Year</option>
+                </select>
+                <button id="commitmentAddButton">Add</button>
+            </div>
+            <p id="commitmentsFeedback"></p>
+        </section>
+
         <section class="remember-why">
             <h2>Remember Why</h2>
             <p id="whyDisplay">You haven't written your WHY yet.</p>

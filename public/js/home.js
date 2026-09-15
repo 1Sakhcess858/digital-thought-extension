@@ -13,15 +13,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const captureInput = document.getElementById('captureInput');
     const captureButton = document.getElementById('captureButton');
     const captureFeedback = document.getElementById('captureFeedback');
+
     const momentPrompt = document.getElementById('momentPrompt');
     const momentInput = document.getElementById('momentInput');
     const momentSaveButton = document.getElementById('momentSaveButton');
     const momentSkipButton = document.getElementById('momentSkipButton');
     const momentFeedback = document.getElementById('momentFeedback');
-
     let currentPrompt = null;
 
-        function loadMoment() {
+    const commitmentsList = document.getElementById('commitmentsList');
+    const commitmentText = document.getElementById('commitmentText');
+    const commitmentWhy = document.getElementById('commitmentWhy');
+    const commitmentHorizonSelect = document.getElementById('commitmentHorizonSelect');
+    const commitmentAddButton = document.getElementById('commitmentAddButton');
+    const commitmentsFeedback = document.getElementById('commitmentsFeedback');
+    const horizonButtons = document.querySelectorAll('.horizon-btn');
+    let currentHorizon = 'today';
+
+    function setGreeting() {
+        const hour = new Date().getHours();
+        let greeting = 'Hello.';
+        if (hour < 12) greeting = 'Good morning.';
+        else if (hour < 18) greeting = 'Good afternoon.';
+        else greeting = 'Good evening.';
+        if (greetingText) greetingText.textContent = greeting;
+    }
+
+    // ---------- moment ----------
+
+    function loadMoment() {
         fetch('/api/prompts/current')
             .then(r => r.json())
             .then(data => {
@@ -97,21 +117,116 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    if (momentSaveButton) {
-        momentSaveButton.addEventListener('click', saveMoment);
-    }
-    if (momentSkipButton) {
-        momentSkipButton.addEventListener('click', skipMoment);
+    if (momentSaveButton) momentSaveButton.addEventListener('click', saveMoment);
+    if (momentSkipButton) momentSkipButton.addEventListener('click', skipMoment);
+
+    // ---------- commitments ----------
+
+    function loadCommitments() {
+        const url = '/api/commitments/' + currentHorizon;
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                const items = data.commitments || [];
+                if (items.length === 0) {
+                    commitmentsList.innerHTML = '<p>Nothing committed for this horizon.</p>';
+                    return;
+                }
+                commitmentsList.innerHTML = items.map(renderCommitment).join('');
+                attachCommitmentHandlers();
+            })
+            .catch(() => {
+                commitmentsList.innerHTML = '<p>Server not responding.</p>';
+            });
     }
 
-    function setGreeting() {
-        const hour = new Date().getHours();
-        let greeting = 'Hello.';
-        if (hour < 12) greeting = 'Good morning.';
-        else if (hour < 18) greeting = 'Good afternoon.';
-        else greeting = 'Good evening.';
-        if (greetingText) greetingText.textContent = greeting;
+    function renderCommitment(c) {
+        const whyHtml = c.why ? '<p class="commitment-why">why: ' + escapeHtml(c.why) + '</p>' : '';
+        return `
+            <div class="commitment-row" data-id="${c.id}">
+                <button class="commitment-done" title="Mark done">☐</button>
+                <div class="commitment-body">
+                    <p class="commitment-text">${escapeHtml(c.text)}</p>
+                    ${whyHtml}
+                </div>
+            </div>
+        `;
     }
+
+    function attachCommitmentHandlers() {
+        commitmentsList.querySelectorAll('.commitment-row').forEach(row => {
+            const id = parseInt(row.dataset.id, 10);
+            row.querySelector('.commitment-done').addEventListener('click', () => {
+                fetch('/api/commitments/' + id + '/done', { method: 'POST' })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.error) {
+                            commitmentsFeedback.textContent = 'Error: ' + data.error;
+                            commitmentsFeedback.style.color = '#b33';
+                            return;
+                        }
+                        row.remove();
+                        if (!commitmentsList.querySelector('.commitment-row')) {
+                            commitmentsList.innerHTML = '<p>Nothing committed for this horizon.</p>';
+                        }
+                    })
+                    .catch(() => {
+                        commitmentsFeedback.textContent = 'Server not responding.';
+                        commitmentsFeedback.style.color = '#b33';
+                    });
+            });
+        });
+    }
+
+    function addCommitment() {
+        const text = commitmentText.value.trim();
+        const why = commitmentWhy.value.trim();
+        const horizon = commitmentHorizonSelect.value;
+
+        if (!text) {
+            commitmentsFeedback.textContent = 'Write something first.';
+            commitmentsFeedback.style.color = '#b33';
+            return;
+        }
+
+        fetch('/api/commitments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, horizon, why: why || null })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    commitmentsFeedback.textContent = 'Error: ' + data.error;
+                    commitmentsFeedback.style.color = '#b33';
+                    return;
+                }
+                commitmentsFeedback.textContent = 'Added.';
+                commitmentsFeedback.style.color = '#2a7d2a';
+                commitmentText.value = '';
+                commitmentWhy.value = '';
+                loadCommitments();
+            })
+            .catch(() => {
+                commitmentsFeedback.textContent = 'Server not responding.';
+                commitmentsFeedback.style.color = '#b33';
+            });
+    }
+
+    if (commitmentAddButton) {
+        commitmentAddButton.addEventListener('click', addCommitment);
+    }
+
+    horizonButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            horizonButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentHorizon = btn.dataset.horizon;
+            loadCommitments();
+        });
+    });
+
+    // ---------- why ----------
 
     function loadWhy() {
         fetch('/api/settings/why')
@@ -146,6 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ---------- echo ----------
+
     function loadEcho() {
         fetch('/api/echoes')
             .then(r => r.json())
@@ -159,6 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(() => { echoDisplay.textContent = 'Server not responding.'; });
     }
+
+    // ---------- threads ----------
 
     function loadThreadOptions() {
         const select = document.getElementById('captureThread');
@@ -191,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => { activeThreadDisplay.textContent = 'Server not responding.'; });
     }
 
+    // ---------- reflection ----------
+
     if (reflectionSaveButton) {
         reflectionSaveButton.addEventListener('click', () => {
             const content = reflectionInput.value.trim();
@@ -217,6 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     }
+
+    // ---------- capture ----------
 
     if (captureButton) {
         captureButton.addEventListener('click', () => {
@@ -252,8 +375,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-       setGreeting();
+    // ---------- helpers ----------
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : String(text);
+        return div.innerHTML;
+    }
+
+    // ---------- boot ----------
+
+    setGreeting();
     loadMoment();
+    loadCommitments();
     loadWhy();
     loadEcho();
     loadThreadOptions();
