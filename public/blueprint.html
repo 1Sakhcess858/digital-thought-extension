@@ -67,10 +67,19 @@
             <p class="bp-hint">The anti-vision. Write what you will not allow.</p>
             <textarea id="bpAntiVision" class="bp-textarea" placeholder="I refuse to…"></textarea>
 
-            <div class="bp-actions">
+                       <div class="bp-actions">
                 <button id="bpSaveNorthStar">Save North Star</button>
                 <span id="bpNorthStarFeedback" class="bp-feedback"></span>
             </div>
+        </section>
+
+        <section class="bp-grid-section" id="bpGridSection">
+            <h2>Your Five-Year Blueprint</h2>
+            <p class="bp-hint" id="bpGridHint">
+                One milestone per area per year is enough. Empty cells are fine.
+                Click a "+" to add a milestone. Click an existing milestone to edit it.
+            </p>
+            <div id="bpGrid">Loading...</div>
         </section>
     </main>
     <script src="/js/blueprint.js"></script>

@@ -18,24 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedValues = [];
     let visionText = '';
     let antiVisionText = '';
+    let milestones = [];
+    let startYear = null;
 
     init();
 
-       function init() {
+           function init() {
         loadMeta();
         loadAreas();
         loadNorthStar();
+        loadMilestones();
     }
 
-    function loadMeta() {
+      function loadMeta() {
         fetch('/api/life-areas/meta')
             .then(r => r.json())
             .then(meta => {
                 if (meta.start_year) {
                     const y = parseInt(meta.start_year, 10);
                     if (!isNaN(y)) {
+                        startYear = y;
                         const end = y + 5;
                         bpMeta.textContent = 'Your blueprint window: ' + y + ' – ' + end;
+                        renderGrid();
                     }
                 }
             })
@@ -103,6 +108,174 @@ document.addEventListener('DOMContentLoaded', () => {
             else s.classList.remove('filled');
         });
     });
+
+    // ---------- milestones grid ----------
+
+    function loadMilestones() {
+        fetch('/api/life-areas/milestones/all')
+            .then(r => r.json())
+            .then(data => {
+                milestones = Array.isArray(data) ? data : [];
+                renderGrid();
+            })
+            .catch(() => {
+                const grid = document.getElementById('bpGrid');
+                if (grid) grid.innerHTML = '<p>Server not responding.</p>';
+            });
+    }
+
+    function getStartYear() {
+        if (startYear) return startYear;
+        const metaEl = document.getElementById('bpMeta');
+        // Fallback to current year if meta not loaded yet
+        return new Date().getFullYear();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('bpGrid');
+        if (!grid) return;
+
+        if (areas.length === 0) {
+            grid.innerHTML = '<p>No life areas defined.</p>';
+            return;
+        }
+
+        const y = getStartYear();
+
+        // Header row
+        const years = [1, 2, 3, 4, 5];
+        let html = '<div class="bp-grid-table">';
+        html += '<div class="bp-grid-header">';
+        html += '<div class="bp-grid-cell bp-grid-corner"></div>';
+        years.forEach(i => {
+            const yearLabel = (y + i - 1);
+            html += `<div class="bp-grid-cell bp-grid-year">Y${i} · ${yearLabel}</div>`;
+        });
+        html += '</div>'; // end header
+
+        // One row per area
+        areas.forEach(area => {
+            html += '<div class="bp-grid-row">';
+            html += `<div class="bp-grid-cell bp-grid-area" style="border-left-color:${area.color || '#7A7A7A'};"><span style="color:${area.color || '#7A7A7A'};">${escapeHtml(area.name)}</span></div>`;
+            years.forEach(i => {
+                const cellMilestones = milestones.filter(m => m.area_id === area.area_id && m.year_index === i);
+                html += `<div class="bp-grid-cell bp-grid-milestone-cell" data-area-id="${area.area_id}" data-year="${i}">`;
+                cellMilestones.forEach(m => {
+                    const statusClass = 'bp-milestone-' + m.status;
+                    html += `
+                        <div class="bp-milestone ${statusClass}" data-milestone-id="${m.id}">
+                            <span class="bp-milestone-text">${escapeHtml(m.text)}</span>
+                        </div>
+                    `;
+                });
+                html += `<button class="bp-grid-add" data-area-id="${area.area_id}" data-year="${i}" title="Add milestone">+</button>`;
+                html += '</div>';
+            });
+            html += '</div>'; // end row
+        });
+
+        html += '</div>'; // end table
+        grid.innerHTML = html;
+    }
+
+    // Click handler: add or edit a milestone
+    document.addEventListener('click', (e) => {
+        const addBtn = e.target.closest('.bp-grid-add');
+        if (addBtn) {
+            const areaId = parseInt(addBtn.dataset.areaId, 10);
+            const year = parseInt(addBtn.dataset.year, 10);
+            openMilestoneEditor(areaId, year, null);
+            return;
+        }
+
+        const milestoneEl = e.target.closest('.bp-milestone');
+        if (milestoneEl) {
+            const id = parseInt(milestoneEl.dataset.milestoneId, 10);
+            const m = milestones.find(x => x.id === id);
+            if (m) {
+                openMilestoneEditor(m.area_id, m.year_index, m);
+            }
+        }
+    });
+
+    function openMilestoneEditor(areaId, year, existing) {
+        const existingId = existing ? existing.id : null;
+        const currentText = existing ? existing.text : '';
+        const currentWhy = existing ? existing.why || '' : '';
+
+        const promptText = prompt('Milestone text:', currentText);
+        if (promptText === null) return; // cancelled
+        const text = promptText.trim();
+        if (!text) return;
+
+        const promptWhy = prompt('Why does this matter? (optional)', currentWhy);
+        if (promptWhy === null) return;
+        const why = promptWhy.trim();
+
+        if (existingId) {
+            // Edit existing
+            fetch('/api/life-areas/milestones/' + existingId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, why })
+            })
+                .then(r => r.json())
+                .then(() => loadMilestones())
+                .catch(() => alert('Server not responding.'));
+        } else {
+            // Create new
+            fetch('/api/life-areas/milestones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ area_id: areaId, year_index: year, text, why })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+                    loadMilestones();
+                })
+                .catch(() => alert('Server not responding.'));
+        }
+    }
+
+    // Right-click a milestone to mark done or delete
+    document.addEventListener('contextmenu', (e) => {
+        const milestoneEl = e.target.closest('.bp-milestone');
+        if (!milestoneEl) return;
+        e.preventDefault();
+
+        const id = parseInt(milestoneEl.dataset.milestoneId, 10);
+        const m = milestones.find(x => x.id === id);
+        if (!m) return;
+
+        const action = prompt(
+            'Milestone: "' + m.text + '"\n\n' +
+            'Type: done | in_progress | dropped | delete',
+            m.status === 'done' ? 'done' : 'in_progress'
+        );
+        if (!action) return;
+
+        if (action === 'delete') {
+            if (!confirm('Delete this milestone?')) return;
+            fetch('/api/life-areas/milestones/' + id, { method: 'DELETE' })
+                .then(r => r.json())
+                .then(() => loadMilestones())
+                .catch(() => alert('Server not responding.'));
+        } else if (['done', 'in_progress', 'planned', 'dropped'].includes(action)) {
+            fetch('/api/life-areas/milestones/' + id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: action })
+            })
+                .then(r => r.json())
+                .then(() => loadMilestones())
+                .catch(() => alert('Server not responding.'));
+        }
+    });
+
 
     // ---------- north star ----------
 

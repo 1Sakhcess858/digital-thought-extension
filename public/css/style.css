@@ -1229,3 +1229,153 @@ button {
 #bpSaveNorthStar:hover {
     background: #4a664a;
 }
+
+/* ---------- Phase 9C: Five-Year Grid ---------- */
+
+.bp-grid-section {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid #e5e2da;
+}
+
+.bp-grid-section h2 {
+    font-size: 1.5em;
+    margin: 0 0 8px 0;
+    color: #2a2a28;
+}
+
+.bp-grid-table {
+    margin-top: 16px;
+    border: 1px solid #e5e2da;
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+}
+
+.bp-grid-header {
+    display: grid;
+    grid-template-columns: 160px repeat(5, 1fr);
+    background: #f5f5ef;
+    border-bottom: 1px solid #e5e2da;
+}
+
+.bp-grid-row {
+    display: grid;
+    grid-template-columns: 160px repeat(5, 1fr);
+    border-bottom: 1px solid #f1efe8;
+}
+
+.bp-grid-row:last-child {
+    border-bottom: none;
+}
+
+.bp-grid-cell {
+    padding: 8px 10px;
+    min-height: 60px;
+    border-right: 1px solid #f1efe8;
+}
+
+.bp-grid-cell:last-child {
+    border-right: none;
+}
+
+.bp-grid-corner {
+    background: #f5f5ef;
+}
+
+.bp-grid-year {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #5b7a5b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.bp-grid-area {
+    font-weight: 600;
+    font-size: 0.95em;
+    border-left: 4px solid #7A7A7A;
+    background: #fafaf7;
+}
+
+.bp-grid-milestone-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bp-milestone {
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    line-height: 1.35;
+    cursor: pointer;
+    background: #f5f5ef;
+    border-left: 3px solid #b5b5ac;
+    transition: all 0.15s;
+}
+
+.bp-milestone:hover {
+    background: #eef2ea;
+}
+
+.bp-milestone-text {
+    display: block;
+}
+
+.bp-milestone-done {
+    border-left-color: #5b7a5b;
+    background: #eef2ea;
+    color: #4a664a;
+    text-decoration: line-through;
+    text-decoration-color: rgba(90, 122, 90, 0.4);
+}
+
+.bp-milestone-in_progress {
+    border-left-color: #c9a45c;
+    background: #f8f3e8;
+}
+
+.bp-milestone-dropped {
+    border-left-color: #b5b5ac;
+    opacity: 0.55;
+    text-decoration: line-through;
+}
+
+.bp-grid-add {
+    align-self: flex-start;
+    width: 24px;
+    height: 24px;
+    border: 1px dashed #ccc;
+    background: transparent;
+    color: #999;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    line-height: 1;
+    padding: 0;
+}
+
+.bp-grid-add:hover {
+    background: #f1efe8;
+    border-color: #999;
+    color: #5b7a5b;
+}
+
+@media (max-width: 720px) {
+    .bp-grid-header,
+    .bp-grid-row {
+        grid-template-columns: 120px repeat(5, 1fr);
+        font-size: 0.8em;
+    }
+
+    .bp-grid-cell {
+        padding: 6px 4px;
+    }
+
+    .bp-milestone {
+        font-size: 0.75em;
+        padding: 4px 5px;
+    }
+}
