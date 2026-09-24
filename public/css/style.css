@@ -1078,3 +1078,154 @@ button {
     color: #777;
     margin: 0;
 }
+
+/* ---------- Phase 9B: North Star ---------- */
+
+.bp-north-star {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid #e5e2da;
+}
+
+.bp-north-star h2 {
+    font-size: 1.5em;
+    margin: 0 0 8px 0;
+    color: #2a2a28;
+}
+
+.bp-subhead {
+    font-size: 1.05em;
+    margin: 24px 0 4px 0;
+    color: #2a2a28;
+}
+
+.bp-values-library {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 20px 0;
+}
+
+.bp-value-chip {
+    padding: 6px 14px;
+    background: white;
+    border: 1px solid #d5d5cc;
+    border-radius: 16px;
+    color: #4a4a44;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.bp-value-chip:hover {
+    background: #f1efe8;
+    border-color: #b5b5ac;
+}
+
+.bp-value-chip.selected {
+    background: #eef2ea;
+    border-color: #5b7a5b;
+    color: #4a664a;
+    font-weight: 600;
+}
+
+.bp-custom-value {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.bp-custom-value input {
+    flex: 1;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 0.95em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}
+
+.bp-custom-value button {
+    padding: 8px 16px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.bp-custom-value button:hover {
+    background: #4a664a;
+}
+
+.bp-selected-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    min-height: 32px;
+}
+
+.bp-empty {
+    color: #999;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.bp-selected-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #5b7a5b;
+    color: white;
+    border-radius: 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.bp-remove-value {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.1em;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.bp-remove-value:hover {
+    opacity: 1;
+}
+
+.bp-textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 1em;
+    line-height: 1.55;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    resize: vertical;
+    min-height: 100px;
+}
+
+#bpSaveNorthStar {
+    padding: 10px 20px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#bpSaveNorthStar:hover {
+    background: #4a664a;
+}

@@ -34,15 +34,45 @@
             <p id="bpMeta" class="bp-meta"></p>
         </section>
 
-        <section class="bp-survey" id="bpSurvey">
+               <section class="bp-survey" id="bpSurvey">
             <div id="bpAreaList">Loading...</div>
             <div class="bp-actions">
                 <button id="bpSaveButton">Save Survey</button>
                 <span id="bpFeedback" class="bp-feedback"></span>
             </div>
         </section>
-    </main>
 
+        <section class="bp-north-star" id="bpNorthStar">
+            <h2>North Star</h2>
+            <p class="bp-hint">
+                Your values are the ground you build on. Choose 3 to 5. Or write your own below.
+            </p>
+
+            <div class="bp-values-library" id="bpValuesLibrary"></div>
+
+            <div class="bp-custom-value">
+                <input type="text" id="bpCustomValue" placeholder="Add your own value…" />
+                <button id="bpAddValueButton">+ Add</button>
+            </div>
+
+            <div class="bp-selected-values" id="bpSelectedValues">
+                <p class="bp-empty">No values selected yet.</p>
+            </div>
+
+            <h3 class="bp-subhead">Your vision, in one paragraph</h3>
+            <p class="bp-hint">Present tense. "It is 2031 and I..."</p>
+            <textarea id="bpVision" class="bp-textarea" placeholder="It is 2031 and I…"></textarea>
+
+            <h3 class="bp-subhead">Optional: what you refuse to let happen</h3>
+            <p class="bp-hint">The anti-vision. Write what you will not allow.</p>
+            <textarea id="bpAntiVision" class="bp-textarea" placeholder="I refuse to…"></textarea>
+
+            <div class="bp-actions">
+                <button id="bpSaveNorthStar">Save North Star</button>
+                <span id="bpNorthStarFeedback" class="bp-feedback"></span>
+            </div>
+        </section>
+    </main>
     <script src="/js/blueprint.js"></script>
 </body>
 </html>

@@ -6,11 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let areas = [];
 
+    // Values library — a starter set. Users can also add their own.
+    const VALUES_LIBRARY = [
+        'Health', 'Career', 'Relationships', 'Finance', 'Growth', 'Fun',
+        'Purpose', 'Home', 'Family', 'Freedom', 'Learning', 'Service',
+        'Courage', 'Honesty', 'Discipline', 'Creativity', 'Contribution',
+        'Peace', 'Faith', 'Simplicity', 'Adventure', 'Patience',
+        'Kindness', 'Curiosity', 'Loyalty', 'Faithfulness'
+    ];
+
+    let selectedValues = [];
+    let visionText = '';
+    let antiVisionText = '';
+
     init();
 
-    function init() {
+       function init() {
         loadMeta();
         loadAreas();
+        loadNorthStar();
     }
 
     function loadMeta() {
@@ -89,6 +103,175 @@ document.addEventListener('DOMContentLoaded', () => {
             else s.classList.remove('filled');
         });
     });
+
+    // ---------- north star ----------
+
+    function loadNorthStar() {
+        fetch('/api/life-areas/meta')
+            .then(r => r.json())
+            .then(meta => {
+                // Values
+                if (meta.values_json) {
+                    try {
+                        selectedValues = JSON.parse(meta.values_json);
+                    } catch {
+                        selectedValues = [];
+                    }
+                } else {
+                    selectedValues = [];
+                }
+
+                visionText = meta.vision_statement || '';
+                antiVisionText = meta.anti_vision || '';
+
+                renderValuesLibrary();
+                renderSelectedValues();
+
+                const visionEl = document.getElementById('bpVision');
+                const antiEl = document.getElementById('bpAntiVision');
+                if (visionEl) visionEl.value = visionText;
+                if (antiEl) antiEl.value = antiVisionText;
+            })
+            .catch(() => { });
+    }
+
+    function renderValuesLibrary() {
+        const container = document.getElementById('bpValuesLibrary');
+        if (!container) return;
+
+        container.innerHTML = VALUES_LIBRARY.map(v => {
+            const isSelected = selectedValues.includes(v);
+            return `<button class="bp-value-chip ${isSelected ? 'selected' : ''}" data-value="${escapeHtml(v)}">${escapeHtml(v)}</button>`;
+        }).join('');
+    }
+
+    function renderSelectedValues() {
+        const container = document.getElementById('bpSelectedValues');
+        if (!container) return;
+
+        if (selectedValues.length === 0) {
+            container.innerHTML = '<p class="bp-empty">No values selected yet.</p>';
+            return;
+        }
+
+        container.innerHTML = selectedValues.map(v => `
+            <span class="bp-selected-chip" data-value="${escapeHtml(v)}">
+                ${escapeHtml(v)}
+                <button class="bp-remove-value" data-value="${escapeHtml(v)}" title="Remove">×</button>
+            </span>
+        `).join('');
+    }
+
+    // Click a value chip in the library to toggle it
+    document.addEventListener('click', (e) => {
+        const chip = e.target.closest('.bp-value-chip');
+        if (chip) {
+            const value = chip.dataset.value;
+            if (selectedValues.includes(value)) {
+                selectedValues = selectedValues.filter(v => v !== value);
+            } else {
+                if (selectedValues.length >= 5) {
+                    alert('You can choose up to 5 values. Remove one first.');
+                    return;
+                }
+                selectedValues.push(value);
+            }
+            renderValuesLibrary();
+            renderSelectedValues();
+            return;
+        }
+
+        const removeBtn = e.target.closest('.bp-remove-value');
+        if (removeBtn) {
+            e.preventDefault();
+            const value = removeBtn.dataset.value;
+            selectedValues = selectedValues.filter(v => v !== value);
+            renderValuesLibrary();
+            renderSelectedValues();
+            return;
+        }
+    });
+
+    // Add a custom value
+    const bpAddValueButton = document.getElementById('bpAddValueButton');
+    const bpCustomValue = document.getElementById('bpCustomValue');
+
+    if (bpAddValueButton) {
+        bpAddValueButton.addEventListener('click', () => {
+            const value = bpCustomValue.value.trim();
+            if (!value) return;
+            if (selectedValues.includes(value)) {
+                bpCustomValue.value = '';
+                return;
+            }
+            if (selectedValues.length >= 5) {
+                alert('You can choose up to 5 values. Remove one first.');
+                return;
+            }
+            selectedValues.push(value);
+            bpCustomValue.value = '';
+            renderSelectedValues();
+        });
+    }
+
+    if (bpCustomValue) {
+        bpCustomValue.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (bpAddValueButton) bpAddValueButton.click();
+            }
+        });
+    }
+
+    // Save North Star
+    const bpSaveNorthStar = document.getElementById('bpSaveNorthStar');
+    const bpNorthStarFeedback = document.getElementById('bpNorthStarFeedback');
+
+    if (bpSaveNorthStar) {
+        bpSaveNorthStar.addEventListener('click', () => {
+            const visionEl = document.getElementById('bpVision');
+            const antiEl = document.getElementById('bpAntiVision');
+
+            const vision = visionEl ? visionEl.value.trim() : '';
+            const anti = antiEl ? antiEl.value.trim() : '';
+
+            const saves = [];
+
+            saves.push(saveMeta('values_json', JSON.stringify(selectedValues)));
+            saves.push(saveMeta('vision_statement', vision));
+            saves.push(saveMeta('anti_vision', anti));
+
+            Promise.all(saves)
+                .then(results => {
+                    const errored = results.find(r => r && r.error);
+                    if (errored) {
+                        if (bpNorthStarFeedback) {
+                            bpNorthStarFeedback.textContent = 'Error: ' + errored.error;
+                            bpNorthStarFeedback.style.color = '#b33';
+                        }
+                        return;
+                    }
+                    if (bpNorthStarFeedback) {
+                        bpNorthStarFeedback.textContent = 'North Star saved.';
+                        bpNorthStarFeedback.style.color = '#2a7d2a';
+                    }
+                })
+                .catch(() => {
+                    if (bpNorthStarFeedback) {
+                        bpNorthStarFeedback.textContent = 'Server not responding.';
+                        bpNorthStarFeedback.style.color = '#b33';
+                    }
+                });
+        });
+    }
+
+    function saveMeta(key, value) {
+        return fetch('/api/life-areas/meta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key, value })
+        }).then(r => r.json());
+    }
 
     if (bpSaveButton) {
         bpSaveButton.addEventListener('click', saveSurvey);
