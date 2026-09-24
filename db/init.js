@@ -121,7 +121,7 @@ db.serialize(() => {
         )
     `);
 
-    db.run(`
+       db.run(`
         CREATE TABLE IF NOT EXISTS future_answers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             text TEXT NOT NULL,
@@ -130,7 +130,16 @@ db.serialize(() => {
         )
     `);
 
-    console.log('Database initialized with all 12 tables.');
+    db.run(`
+        CREATE TABLE IF NOT EXISTS weekly_reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            content TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deleted_at DATETIME DEFAULT NULL
+        )
+    `);
+
+    console.log('Database initialized with all 13 tables.');
 });
 
 db.close();
