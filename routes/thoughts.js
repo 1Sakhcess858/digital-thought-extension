@@ -10,7 +10,7 @@ const ALLOWED_TYPES = ['Thought', 'Idea', 'Question', 'Lesson', 'Reflection', 'G
 
 // POST: Create a new thought
 router.post('/', (req, res) => {
-    const { type, content, thread_id } = req.body;
+    const { type, content, thread_id, why, next_step } = req.body;
 
     if (!type || !content) {
         return res.status(400).json({ error: 'Type and content are required.' });
@@ -21,13 +21,26 @@ router.post('/', (req, res) => {
     if (content.length > 10000) {
         return res.status(400).json({ error: 'Content too long (max 10000 characters).' });
     }
+    if (why && why.length > 10000) {
+        return res.status(400).json({ error: 'Why too long (max 10000 characters).' });
+    }
+    if (next_step && next_step.length > 10000) {
+        return res.status(400).json({ error: 'Next step too long (max 10000 characters).' });
+    }
 
-    const sql = 'INSERT INTO thoughts (type, content, thread_id) VALUES (?, ?, ?)';
-    db.run(sql, [type, content, thread_id || null], function (err) {
+    const sql = 'INSERT INTO thoughts (type, content, thread_id, why, next_step) VALUES (?, ?, ?, ?, ?)';
+    db.run(sql, [type, content, thread_id || null, why || null, next_step || null], function (err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json({ id: this.lastID, type, content, thread_id: thread_id || null });
+        res.json({
+            id: this.lastID,
+            type,
+            content,
+            thread_id: thread_id || null,
+            why: why || null,
+            next_step: next_step || null
+        });
     });
 });
 
@@ -39,6 +52,8 @@ router.get('/', (req, res) => {
             thoughts.type,
             thoughts.content,
             thoughts.thread_id,
+            thoughts.why,
+            thoughts.next_step,
             thoughts.created_at,
             threads.title AS thread_title
         FROM thoughts
@@ -67,6 +82,8 @@ router.get('/:id', (req, res) => {
             thoughts.type,
             thoughts.content,
             thoughts.thread_id,
+            thoughts.why,
+            thoughts.next_step,
             thoughts.created_at,
             threads.title AS thread_title
         FROM thoughts
@@ -84,19 +101,19 @@ router.get('/:id', (req, res) => {
     });
 });
 
-// PATCH: Edit a thought (content, type, and/or thread_id)
+// PATCH: Edit a thought (content, type, thread_id, why, and/or next_step)
 router.patch('/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) {
         return res.status(400).json({ error: 'Invalid thought id.' });
     }
 
-    const { content, type, thread_id } = req.body;
+    const { content, type, thread_id, why, next_step } = req.body;
 
     const fields = [];
     const values = [];
 
-        if (content !== undefined) {
+    if (content !== undefined) {
         if (!content || !content.trim()) {
             return res.status(400).json({ error: 'Content cannot be empty.' });
         }
@@ -116,6 +133,20 @@ router.patch('/:id', (req, res) => {
     if (thread_id !== undefined) {
         fields.push('thread_id = ?');
         values.push(thread_id || null);
+    }
+    if (why !== undefined) {
+        if (why && why.length > 10000) {
+            return res.status(400).json({ error: 'Why too long (max 10000 characters).' });
+        }
+        fields.push('why = ?');
+        values.push(why || null);
+    }
+    if (next_step !== undefined) {
+        if (next_step && next_step.length > 10000) {
+            return res.status(400).json({ error: 'Next step too long (max 10000 characters).' });
+        }
+        fields.push('next_step = ?');
+        values.push(next_step || null);
     }
 
     if (fields.length === 0) {

@@ -25,9 +25,6 @@
         <section class="capture">
             <h2>🧠 What's on your mind?</h2>
 
-                   <section class="capture">
-            <h2>≡ƒºá What's on your mind?</h2>
-
             <select id="captureType">
                 <option value="Thought">Thought</option>
                 <option value="Idea">Idea</option>
@@ -42,11 +39,13 @@
             </select>
 
             <textarea id="captureInput" placeholder="Type your thought..."></textarea>
+            <textarea id="captureWhy" placeholder="Why does this matter? (optional)"></textarea>
+            <textarea id="captureNextStep" placeholder="What will you do about it? (optional)"></textarea>
             <button id="captureButton">Capture</button>
             <p id="captureFeedback"></p>
         </section>
 
-               <section class="thoughts-history">
+        <section class="thoughts-history">
             <h2>Recent Thoughts</h2>
             <input type="search" id="searchInput" placeholder="Search thoughts...">
             <div id="thoughtsList">Loading...</div>

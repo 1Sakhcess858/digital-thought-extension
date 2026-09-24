@@ -1,149 +1,164 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+/* ---------- Base ---------- */
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f5f5;
-    color: #222;
-    line-height: 1.6;
-    padding: 20px;
-    max-width: 600px;
-    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: #faf9f6;
+    color: #2a2a28;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0 16px 48px 16px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
+    padding: 24px 0 12px 0;
+    border-bottom: 1px solid #e5e2da;
+    margin-bottom: 16px;
 }
 
 header h1 {
-    font-size: 28px;
-    letter-spacing: 2px;
-    color: #333;
+    margin: 0 0 4px 0;
+    font-size: 1.6em;
+    color: #2a2a28;
 }
 
 header p {
-    font-size: 14px;
-    color: #888;
+    margin: 0;
+    color: #777;
+    font-size: 0.95em;
 }
 
-.capture {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.capture h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-    color: #333;
-}
-
-#captureInput {
-    width: 100%;
-    min-height: 100px;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
-    resize: vertical;
-    outline: none;
-}
-
-#captureInput:focus {
-    border-color: #888;
-}
-
-#captureButton {
-    margin-top: 12px;
-    padding: 10px 20px;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#captureButton:hover {
-    background: #555;
-}
-
-.status {
-    text-align: center;
-    font-size: 14px;
-    color: #888;
-}
-/* Navigation */
 nav {
     display: flex;
-    justify-content: space-around;
-    background: white;
+    gap: 4px;
+    flex-wrap: wrap;
     padding: 12px 0;
-    border-radius: 12px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-bottom: 1px solid #e5e2da;
 }
 
 nav a {
-    text-decoration: none;
+    padding: 6px 12px;
     color: #555;
-    font-size: 13px;
-    text-align: center;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: background 0.15s;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.95em;
+    transition: background 0.15s, color 0.15s;
 }
 
 nav a:hover {
-    background: #f0f0f0;
-    color: #222;
+    background: #f1efe8;
+    color: #2a2a28;
 }
 
 nav a.active {
-    color: #222;
+    color: #5b7a5b;
     font-weight: 600;
 }
-/* Capture form */
-#captureType {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 12px;
-    font-family: inherit;
+
+main {
+    display: block;
 }
 
-#captureFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-/* Thoughts history */
-.thoughts-history {
+section {
+    margin-bottom: 28px;
+    padding: 16px;
     background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e5e2da;
+    border-radius: 8px;
 }
 
-.thoughts-history h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-    color: #333;
+section h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.15em;
+    color: #2a2a28;
 }
+
+section p {
+    margin: 6px 0;
+}
+
+textarea,
+input[type="text"],
+input[type="search"],
+select {
+    font-family: inherit;
+    font-size: 1em;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* ---------- Capture ---------- */
+
+.capture textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 8px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    resize: vertical;
+    min-height: 60px;
+}
+
+#captureInput {
+    min-height: 90px;
+}
+
+#captureThread,
+#captureType {
+    display: block;
+    margin: 6px 0;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}
+
+#captureButton,
+#echoSaveButton,
+#reflectionSaveButton,
+#whySaveButton,
+#whyEditButton {
+    padding: 8px 16px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95em;
+    margin-top: 8px;
+}
+
+#captureButton:hover,
+#echoSaveButton:hover,
+#reflectionSaveButton:hover,
+#whySaveButton:hover {
+    background: #4a664a;
+}
+
+#whyEditButton {
+    background: transparent;
+    color: #5b7a5b;
+    border: 1px solid #5b7a5b;
+}
+
+#whyEditButton:hover {
+    background: #f1efe8;
+}
+
+/* ---------- Thought cards ---------- */
 
 .thought-card {
+    cursor: pointer;
+    transition: background 0.15s;
     padding: 12px 0;
     border-bottom: 1px solid #eee;
 }
@@ -152,317 +167,61 @@ nav a.active {
     border-bottom: none;
 }
 
-.thought-type {
-    display: inline-block;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    background: #f0f0f0;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-bottom: 6px;
-}
-
-.thought-content {
-    font-size: 15px;
-    color: #222;
-    margin-bottom: 4px;
-}
-
-.thought-date {
-    font-size: 12px;
-    color: #aaa;
-}
-/* Thread input */
-#threadTitle {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 12px;
-    font-family: inherit;
-}
-
-#threadDescription {
-    width: 100%;
-    min-height: 70px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 12px;
-    font-family: inherit;
-    resize: vertical;
-}
-
-#threadFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-
-.thought-card h3 {
-    font-size: 16px;
-    margin-bottom: 4px;
-    color: #222;
-}
-/* Remember Why */
-.remember-why {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.remember-why h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
-    color: #333;
-}
-
-.remember-why p {
-    font-size: 15px;
-    color: #555;
-    margin-bottom: 12px;
-    line-height: 1.6;
-}
-
-.remember-why button {
-    padding: 8px 16px;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.remember-why button:hover {
-    background: #555;
-}
-
-#whyInput {
-    width: 100%;
-    min-height: 80px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    margin-bottom: 12px;
-    resize: vertical;
-}
-/* Echo */
-.echo {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.echo h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
-    color: #333;
-}
-
-.echo p {
-    font-size: 16px;
-    color: #555;
-    font-style: italic;
-}
-
-#echoInput {
-    width: 100%;
-    min-height: 70px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    margin-bottom: 12px;
-    resize: vertical;
-}
-
-#echoFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-/* Reflection */
-.reflection {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.reflection h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-.reflection p {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 12px;
-}
-
-#reflectionInput {
-    width: 100%;
-    min-height: 80px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    margin-bottom: 12px;
-    resize: vertical;
-}
-
-#reflectionFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-/* Goals form */
-#goalTitle {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 12px;
-    font-family: inherit;
-}
-
-#goalWhy,
-#goalNextAction {
-    width: 100%;
-    min-height: 70px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 12px;
-    font-family: inherit;
-    resize: vertical;
-}
-
-#goalFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-/* Future Me */
-#futureMessage {
-    width: 100%;
-    min-height: 90px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    margin-bottom: 12px;
-    resize: vertical;
-}
-
-#futureUnlockDate {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    margin-bottom: 12px;
-}
-
-#futureFeedback {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #2a7d2a;
-    min-height: 20px;
-}
-
-.future-response {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.future-response button {
-    padding: 6px 12px;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.future-response button:hover {
-    background: #555;
-}
-/* Greeting */
-.greeting {
-    margin-bottom: 20px;
-}
-
-.greeting h2 {
-    font-size: 22px;
-    color: #222;
-}
-
-/* Active thread */
-.active-thread {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.active-thread h2 {
-    font-size: 18px;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-.active-thread p {
-    font-size: 15px;
-    color: #555;
-}
-.thought-thread {
-    font-size: 0.85em;
-    color: #777;
-    margin-left: 8px;
-}
-/* Phase 3B — inline edit mode */
-.thought-card {
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
 .thought-card:hover {
     background: #fafaf7;
 }
+
+.thought-type {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #5b7a5b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-right: 8px;
+}
+
+.thought-thread {
+    font-size: 0.85em;
+    color: #777;
+}
+
+.thought-content {
+    margin: 8px 0 4px 0;
+    color: #2a2a28;
+    font-size: 1.02em;
+    line-height: 1.55;
+}
+
+.thought-why,
+.thought-next-step {
+    font-size: 0.9em;
+    color: #666;
+    margin: 4px 0 0 0;
+    padding-left: 8px;
+    border-left: 2px solid #e0ddd5;
+}
+
+.layer-label {
+    font-weight: 600;
+    color: #5b7a5b;
+    margin-right: 4px;
+}
+
+.thought-date {
+    display: block;
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 6px;
+}
+
+/* ---------- Edit mode ---------- */
 
 .thought-card.editing {
     cursor: default;
     background: #f5f5ef;
     border: 1px solid #d8d8d0;
     padding: 14px;
+    border-radius: 6px;
 }
 
 .thought-card.editing:hover {
@@ -471,7 +230,9 @@ nav a.active {
 
 .edit-type,
 .edit-thread,
-.edit-content {
+.edit-content,
+.edit-why,
+.edit-next-step {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -487,6 +248,13 @@ nav a.active {
 .edit-content {
     min-height: 90px;
     resize: vertical;
+}
+
+.edit-why,
+.edit-next-step {
+    min-height: 60px;
+    resize: vertical;
+    font-size: 0.95em;
 }
 
 .edit-actions {
@@ -523,20 +291,23 @@ nav a.active {
 }
 
 .btn-delete {
-    background: #b33;
+    background: #b54a4a;
     color: white;
 }
 
 .btn-delete:hover {
-    background: #992222;
+    background: #9a3a3a;
 }
-/* ---------- Phase 6A: Moment + Prompt History + Editor ---------- */
+
+/* ---------- Moment ---------- */
 
 .moment-actions {
     display: flex;
     gap: 8px;
     margin-top: 8px;
 }
+
+/* ---------- Prompt history / editor ---------- */
 
 .prompt-filter {
     display: flex;
@@ -629,25 +400,7 @@ nav a.active {
     border: 1px solid transparent;
 }
 
-.btn-save {
-    background: #2a7d2a;
-    color: white;
-}
-
-.btn-save:hover {
-    background: #226622;
-}
-
-.btn-cancel {
-    background: #eee;
-    color: #333;
-    border-color: #ccc;
-}
-
-.btn-cancel:hover {
-    background: #e2e2e2;
-}
-/* ---------- Phase 6B: Commitments ---------- */
+/* ---------- Commitments ---------- */
 
 .commitment-horizon {
     display: flex;

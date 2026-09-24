@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const reflectionSaveButton = document.getElementById('reflectionSaveButton');
     const reflectionFeedback = document.getElementById('reflectionFeedback');
     const captureInput = document.getElementById('captureInput');
+    const captureWhy = document.getElementById('captureWhy');
+    const captureNextStep = document.getElementById('captureNextStep');
     const captureButton = document.getElementById('captureButton');
     const captureFeedback = document.getElementById('captureFeedback');
 
@@ -355,10 +357,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? parseInt(threadSelect.value, 10)
                 : null;
 
+            const why = captureWhy ? captureWhy.value.trim() : '';
+            const next_step = captureNextStep ? captureNextStep.value.trim() : '';
+
             fetch('/api/thoughts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'Thought', content, thread_id: threadId })
+                body: JSON.stringify({
+                    type: 'Thought',
+                    content,
+                    thread_id: threadId,
+                    why: why || null,
+                    next_step: next_step || null
+                })
             })
                 .then(r => r.json())
                 .then(data => {
@@ -369,6 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         captureFeedback.textContent = 'Captured.';
                         captureFeedback.style.color = '#2a7d2a';
                         captureInput.value = '';
+                        if (captureWhy) captureWhy.value = '';
+                        if (captureNextStep) captureNextStep.value = '';
                         if (threadSelect) threadSelect.value = '';
                     }
                 });

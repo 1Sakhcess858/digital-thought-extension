@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadThreads().then(loadThoughts);
     }
 
-    // ---------- data ----------
     function loadThreads() {
         return fetch('/api/threads')
             .then(r => r.json())
@@ -76,13 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
         attachHandlers();
     }
 
-    // ---------- rendering ----------
     function cardFor(thought) {
+        const whyHtml = thought.why
+            ? `<p class="thought-why"><span class="layer-label">why:</span> ${escapeHtml(thought.why)}</p>`
+            : '';
+        const stepHtml = thought.next_step
+            ? `<p class="thought-next-step"><span class="layer-label">next:</span> ${escapeHtml(thought.next_step)}</p>`
+            : '';
+
         return `
             <div class="thought-card" data-id="${thought.id}">
                 <span class="thought-type">${escapeHtml(thought.type)}</span>
                 ${thought.thread_title ? `<span class="thought-thread">→ ${escapeHtml(thought.thread_title)}</span>` : ''}
                 <p class="thought-content">${escapeHtml(thought.content)}</p>
+                ${whyHtml}
+                ${stepHtml}
                 <span class="thought-date">${escapeHtml(thought.created_at)}</span>
             </div>
         `;
@@ -104,6 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <select class="edit-type">${typeOptions}</select>
                 <select class="edit-thread">${threadOptions}</select>
                 <textarea class="edit-content">${escapeHtml(thought.content)}</textarea>
+                <textarea class="edit-why" placeholder="Why does this matter? (optional)">${escapeHtml(thought.why || '')}</textarea>
+                <textarea class="edit-next-step" placeholder="What will you do about it? (optional)">${escapeHtml(thought.next_step || '')}</textarea>
                 <div class="edit-actions">
                     <button class="btn-save">Save</button>
                     <button class="btn-cancel">Cancel</button>
@@ -113,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // ---------- interaction ----------
     function attachHandlers() {
         thoughtsList.querySelectorAll('.thought-card').forEach(card => {
             if (card.classList.contains('editing')) return;
@@ -143,6 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentEl = card.querySelector('.thought-content');
         const dateEl = card.querySelector('.thought-date');
         const threadEl = card.querySelector('.thought-thread');
+        const whyEl = card.querySelector('.thought-why');
+        const stepEl = card.querySelector('.thought-next-step');
 
         originalData = {
             id,
@@ -150,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
             content: contentEl ? contentEl.textContent : '',
             created_at: dateEl ? dateEl.textContent : '',
             thread_id: null,
-            thread_title: threadEl ? threadEl.textContent.replace('→ ', '') : null
+            thread_title: threadEl ? threadEl.textContent.replace('→ ', '') : null,
+            why: whyEl ? whyEl.textContent.replace('why:', '').trim() : '',
+            next_step: stepEl ? stepEl.textContent.replace('next:', '').trim() : ''
         };
 
         if (originalData.thread_title) {
@@ -183,10 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const newContent = card.querySelector('.edit-content').value;
         const newType = card.querySelector('.edit-type').value;
         const newThread = card.querySelector('.edit-thread').value;
+        const newWhy = card.querySelector('.edit-why').value;
+        const newStep = card.querySelector('.edit-next-step').value;
         return (
             newContent !== originalData.content ||
             newType !== originalData.type ||
-            (parseInt(newThread, 10) || null) !== originalData.thread_id
+            (parseInt(newThread, 10) || null) !== originalData.thread_id ||
+            newWhy !== originalData.why ||
+            newStep !== originalData.next_step
         );
     }
 
@@ -207,6 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = card.querySelector('.edit-type').value;
         const threadValue = card.querySelector('.edit-thread').value;
         const thread_id = threadValue ? parseInt(threadValue, 10) : null;
+        const why = card.querySelector('.edit-why').value.trim();
+        const next_step = card.querySelector('.edit-next-step').value.trim();
 
         if (!content) {
             alert('Content cannot be empty.');
@@ -216,7 +234,13 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(`/api/thoughts/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content, type, thread_id })
+            body: JSON.stringify({
+                content,
+                type,
+                thread_id,
+                why: why || null,
+                next_step: next_step || null
+            })
         })
             .then(r => r.json())
             .then(data => {
@@ -232,7 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     thread_id,
                     thread_title: thread_id
                         ? (threads.find(t => t.id === thread_id) || {}).title || null
-                        : null
+                        : null,
+                    why: why || null,
+                    next_step: next_step || null
                 };
                 const idx = allThoughts.findIndex(t => t.id === id);
                 if (idx !== -1) allThoughts[idx] = updated;
@@ -271,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // ---------- helpers ----------
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text == null ? '' : String(text);

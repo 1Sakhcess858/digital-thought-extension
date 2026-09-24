@@ -110,12 +110,16 @@ db.serialize(() => {
         )
     `);
 
-    db.run(`
-        CREATE TABLE IF NOT EXISTS commitment_events (
+        db.run(`
+        CREATE TABLE IF NOT EXISTS thoughts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            commitment_id INTEGER NOT NULL,
-            event TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            thread_id INTEGER,
+            why TEXT DEFAULT NULL,
+            next_step TEXT DEFAULT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deleted_at DATETIME DEFAULT NULL
         )
     `);
 
