@@ -1,105 +1,200 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const futureMessage = document.getElementById('futureMessage');
+    // ---------- Mirror elements ----------
+    const mirrorInput = document.getElementById('mirrorInput');
+    const mirrorSaveButton = document.getElementById('mirrorSaveButton');
+    const mirrorFeedback = document.getElementById('mirrorFeedback');
+    const mirrorHistory = document.getElementById('mirrorHistory');
+
+    // ---------- Future message elements ----------
+    const futureMessageInput = document.getElementById('futureMessageInput');
     const futureUnlockDate = document.getElementById('futureUnlockDate');
     const futureSaveButton = document.getElementById('futureSaveButton');
     const futureFeedback = document.getElementById('futureFeedback');
-    const futureList = document.getElementById('futureList');
+    const futureMessagesList = document.getElementById('futureMessagesList');
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+    // ---------- Mirror logic ----------
 
-    function isUnlocked(unlockDate) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const unlock = new Date(unlockDate);
-        unlock.setHours(0, 0, 0, 0);
-        return today >= unlock;
-    }
-
-    function loadMessages() {
-        fetch('/api/future')
-            .then(response => response.json())
-            .then(messages => {
-                if (messages.length === 0) {
-                    futureList.innerHTML = '<p>No messages yet.</p>';
+    function loadMirrorAnswers() {
+        fetch('/api/future-answers')
+            .then(r => r.json())
+            .then(answers => {
+                if (!Array.isArray(answers) || answers.length === 0) {
+                    mirrorHistory.innerHTML = '<p>No answers yet. Write your first one above.</p>';
                     return;
                 }
-
-                futureList.innerHTML = messages.map(msg => {
-                    const unlocked = isUnlocked(msg.unlock_date);
-
-                    if (!unlocked) {
-                        return `
-                            <div class="thought-card">
-                                <p>🔒 Locked until ${msg.unlock_date}</p>
-                            </div>
-                        `;
-                    }
-
-                    const responseText = msg.response
-                        ? `<p><strong>You said:</strong> ${escapeHtml(msg.response)}</p>`
-                        : `
-                            <div class="future-response">
-                                <button onclick="respondToMessage(${msg.id}, 'Still true')">Still true</button>
-                                <button onclick="respondToMessage(${msg.id}, 'Changed')">Changed</button>
-                                <button onclick="respondToMessage(${msg.id}, "I don't know")">I don't know</button>
-                            </div>
-                        `;
-
-                    return `
-                        <div class="thought-card">
-                            <p>🔓 Your future self has something to read:</p>
-                            <p class="thought-content">${escapeHtml(msg.message)}</p>
-                            <span class="thought-date">Unlocked: ${msg.unlock_date}</span>
-                            ${responseText}
-                        </div>
-                    `;
-                }).join('');
+                mirrorHistory.innerHTML = answers.map(renderMirrorAnswer).join('');
             })
             .catch(() => {
-                futureList.innerHTML = '<p>Server not responding.</p>';
+                mirrorHistory.innerHTML = '<p>Server not responding.</p>';
             });
     }
 
-    window.respondToMessage = function (id, response) {
-        fetch('/api/future/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ response })
-        }).then(() => loadMessages());
-    };
+    function renderMirrorAnswer(a) {
+        const age = timeAgo(a.created_at);
+        return `
+            <div class="mirror-card" data-id="${a.id}">
+                <p class="mirror-text">${escapeHtml(a.text)}</p>
+                <span class="mirror-date">${escapeHtml(a.created_at)} · ${age}</span>
+                <button class="mirror-delete" data-id="${a.id}" title="Delete this answer">Delete</button>
+            </div>
+        `;
+    }
+
+    function attachMirrorHandlers() {
+        mirrorHistory.querySelectorAll('.mirror-delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id, 10);
+                if (!confirm('Delete this answer?')) return;
+                fetch('/api/future-answers/' + id, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.error) {
+                            mirrorFeedback.textContent = 'Error: ' + data.error;
+                            mirrorFeedback.style.color = '#b33';
+                            return;
+                        }
+                        loadMirrorAnswers();
+                    })
+                    .catch(() => {
+                        mirrorFeedback.textContent = 'Server not responding.';
+                        mirrorFeedback.style.color = '#b33';
+                    });
+            });
+        });
+    }
+
+    if (mirrorSaveButton) {
+        mirrorSaveButton.addEventListener('click', () => {
+            const text = mirrorInput.value.trim();
+            if (!text) {
+                mirrorFeedback.textContent = 'Write something first.';
+                mirrorFeedback.style.color = '#b33';
+                return;
+            }
+            fetch('/api/future-answers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        mirrorFeedback.textContent = 'Error: ' + data.error;
+                        mirrorFeedback.style.color = '#b33';
+                        return;
+                    }
+                    mirrorFeedback.textContent = 'Saved.';
+                    mirrorFeedback.style.color = '#2a7d2a';
+                    mirrorInput.value = '';
+                    loadMirrorAnswers();
+                })
+                .catch(() => {
+                    mirrorFeedback.textContent = 'Server not responding.';
+                    mirrorFeedback.style.color = '#b33';
+                });
+        });
+    }
+
+    // ---------- Future message logic ----------
+
+    function loadFutureMessages() {
+        fetch('/api/future')
+            .then(r => r.json())
+            .then(messages => {
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    futureMessagesList.innerHTML = '<p>No messages yet.</p>';
+                    return;
+                }
+                futureMessagesList.innerHTML = messages.map(renderFutureMessage).join('');
+                attachFutureMessageHandlers();
+            })
+            .catch(() => {
+                futureMessagesList.innerHTML = '<p>Server not responding.</p>';
+            });
+    }
+
+    function renderFutureMessage(m) {
+        const unlockDate = new Date(m.unlock_date);
+        const now = new Date();
+        const isLocked = unlockDate > now;
+        const status = isLocked
+            ? '<span class="locked">🔒 Locked</span>'
+            : '<span class="unlocked">🔓 Unlocked</span>';
+
+        const body = isLocked
+            ? '<p class="future-locked-text">This message unlocks on ' + escapeHtml(m.unlock_date) + '</p>'
+            : '<p class="future-message-text">' + escapeHtml(m.message) + '</p>';
+
+        const responseHtml = m.response
+            ? '<p class="future-response"><strong>Your response:</strong> ' + escapeHtml(m.response) + '</p>'
+            : '';
+
+        const actions = (!isLocked && !m.response)
+            ? `
+                <div class="future-actions" data-id="${m.id}">
+                    <button class="future-respond" data-response="Still true">Still true</button>
+                    <button class="future-respond" data-response="Changed">Changed</button>
+                    <button class="future-respond" data-response="I don't know">I don't know</button>
+                </div>
+            `
+            : '';
+
+        return `
+            <div class="thought-card future-message-card">
+                <div class="future-status">${status}</div>
+                ${body}
+                ${responseHtml}
+                ${actions}
+            </div>
+        `;
+    }
+
+    function attachFutureMessageHandlers() {
+        futureMessagesList.querySelectorAll('.future-actions').forEach(row => {
+            const id = parseInt(row.dataset.id, 10);
+            row.querySelectorAll('.future-respond').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const response = btn.dataset.response;
+                    fetch('/api/future/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ response })
+                    })
+                        .then(r => r.json())
+                        .then(() => loadFutureMessages())
+                        .catch(() => alert('Server not responding.'));
+                });
+            });
+        });
+    }
 
     if (futureSaveButton) {
         futureSaveButton.addEventListener('click', () => {
-            const message = futureMessage.value.trim();
+            const message = futureMessageInput.value.trim();
             const unlock_date = futureUnlockDate.value;
 
             if (!message || !unlock_date) {
-                futureFeedback.textContent = 'Please write a message and choose a date.';
+                futureFeedback.textContent = 'Message and unlock date are required.';
                 futureFeedback.style.color = '#b33';
                 return;
             }
-
             fetch('/api/future', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, unlock_date })
             })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.error) {
                         futureFeedback.textContent = 'Error: ' + data.error;
                         futureFeedback.style.color = '#b33';
-                    } else {
-                        futureFeedback.textContent = 'Message saved.';
-                        futureFeedback.style.color = '#2a7d2a';
-                        futureMessage.value = '';
-                        futureUnlockDate.value = '';
-                        loadMessages();
+                        return;
                     }
+                    futureFeedback.textContent = 'Message saved.';
+                    futureFeedback.style.color = '#2a7d2a';
+                    futureMessageInput.value = '';
+                    futureUnlockDate.value = '';
+                    loadFutureMessages();
                 })
                 .catch(() => {
                     futureFeedback.textContent = 'Server not responding.';
@@ -108,5 +203,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    loadMessages();
+    // ---------- helpers ----------
+
+    function timeAgo(dateString) {
+        const now = new Date();
+        const then = new Date(dateString.replace(' ', 'T'));
+        const diffMs = now - then;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHr / 24);
+
+        if (diffMin < 1) return 'just now';
+        if (diffMin < 60) return diffMin + ' min ago';
+        if (diffHr < 24) return diffHr + ' hour' + (diffHr === 1 ? '' : 's') + ' ago';
+        if (diffDay < 30) return diffDay + ' day' + (diffDay === 1 ? '' : 's') + ' ago';
+        if (diffDay < 365) {
+            const months = Math.floor(diffDay / 30);
+            return months + ' month' + (months === 1 ? '' : 's') + ' ago';
+        }
+        const years = Math.floor(diffDay / 365);
+        return years + ' year' + (years === 1 ? '' : 's') + ' ago';
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : String(text);
+        return div.innerHTML;
+    }
+
+    // ---------- boot ----------
+
+    loadMirrorAnswers();
+    loadFutureMessages();
 });

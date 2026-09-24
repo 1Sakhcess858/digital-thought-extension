@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D.T.E. — Future Me</title>
+    <title>D.T.E. — Future</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Future Me</h1>
-        <p>Messages to your future self</p>
+        <h1>Future</h1>
+        <p>Messages to your future self · Five-Year Mirror</p>
     </header>
 
     <nav>
@@ -22,18 +22,26 @@
     </nav>
 
     <main>
+        <section class="mirror">
+            <h2>Five-Year Mirror</h2>
+            <p class="hint">Where will you be in 5 years? Write it as if it is already true. Save as many answers as you want — they stack here over time.</p>
+            <textarea id="mirrorInput" placeholder="In 5 years I will be..."></textarea>
+            <button id="mirrorSaveButton">Save Answer</button>
+            <p id="mirrorFeedback"></p>
+            <div id="mirrorHistory">Loading...</div>
+        </section>
+
         <section class="capture">
-            <h2>Write a Message</h2>
-            <textarea id="futureMessage" placeholder="Write a message to your future self..."></textarea>
-            <label for="futureUnlockDate">Unlock date:</label>
+            <h2>Write a Message to Your Future Self</h2>
+            <textarea id="futureMessageInput" placeholder="Write a message to yourself..."></textarea>
             <input type="date" id="futureUnlockDate" />
             <button id="futureSaveButton">Save Message</button>
             <p id="futureFeedback"></p>
         </section>
 
         <section class="thoughts-history">
-            <h2>Your Messages</h2>
-            <div id="futureList">Loading...</div>
+            <h2>Your Future Messages</h2>
+            <div id="futureMessagesList">Loading...</div>
         </section>
     </main>
 

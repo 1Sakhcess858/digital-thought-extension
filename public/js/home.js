@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const whyEditForm = document.getElementById('whyEditForm');
     const whyInput = document.getElementById('whyInput');
     const whySaveButton = document.getElementById('whySaveButton');
+    const fiveYearSnippet = document.getElementById('fiveYearSnippet');
+    const fiveYearText = document.getElementById('fiveYearText');
+    const fiveYearAge = document.getElementById('fiveYearAge');
     const echoDisplay = document.getElementById('echoDisplay');
     const activeThreadDisplay = document.getElementById('activeThreadDisplay');
     const reflectionInput = document.getElementById('reflectionInput');
@@ -263,6 +266,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ---------- five-year snippet ----------
+
+    function loadFiveYearSnippet() {
+        fetch('/api/future-answers/latest')
+            .then(r => r.json())
+            .then(data => {
+                if (!data || !data.text) {
+                    if (fiveYearSnippet) fiveYearSnippet.style.display = 'none';
+                    return;
+                }
+                if (fiveYearSnippet) fiveYearSnippet.style.display = 'block';
+                if (fiveYearText) fiveYearText.textContent = data.text;
+                if (fiveYearAge) fiveYearAge.textContent = 'Written ' + timeAgo(data.created_at);
+            })
+            .catch(() => {
+                if (fiveYearSnippet) fiveYearSnippet.style.display = 'none';
+            });
+    }
+
+    function timeAgo(dateString) {
+        const now = new Date();
+        const then = new Date(dateString.replace(' ', 'T'));
+        const diffMs = now - then;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHr / 24);
+
+        if (diffMin < 1) return 'just now';
+        if (diffMin < 60) return diffMin + ' min ago';
+        if (diffHr < 24) return diffHr + ' hour' + (diffHr === 1 ? '' : 's') + ' ago';
+        if (diffDay < 30) return diffDay + ' day' + (diffDay === 1 ? '' : 's') + ' ago';
+        if (diffDay < 365) {
+            const months = Math.floor(diffDay / 30);
+            return months + ' month' + (months === 1 ? '' : 's') + ' ago';
+        }
+        const years = Math.floor(diffDay / 365);
+        return years + ' year' + (years === 1 ? '' : 's') + ' ago';
+    }
+
     // ---------- echo ----------
 
     function loadEcho() {
@@ -402,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMoment();
     loadCommitments();
     loadWhy();
+    loadFiveYearSnippet();
     loadEcho();
     loadThreadOptions();
     loadActiveThread();

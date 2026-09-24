@@ -19,6 +19,7 @@ const goalsRoute = require('./routes/goals');
 const commitmentsRoute = require('./routes/commitments');
 const futureRoute = require('./routes/future');
 const promptsRoute = require('./routes/prompts');
+const futureAnswersRoute = require('./routes/future-answers');
 
 app.use('/api/thoughts', thoughtsRoute);
 app.use('/api/threads', threadsRoute);
@@ -29,6 +30,7 @@ app.use('/api/goals', goalsRoute);
 app.use('/api/future', futureRoute);
 app.use('/api/prompts', promptsRoute);
 app.use('/api/commitments', commitmentsRoute);
+app.use('/api/future-answers', futureAnswersRoute);
 
 app.get('/api/status', (req, res) => {
     res.json({ status: 'D.T.E. is running' });

@@ -11,6 +11,8 @@ db.serialize(() => {
             type TEXT NOT NULL,
             content TEXT NOT NULL,
             thread_id INTEGER,
+            why TEXT DEFAULT NULL,
+            next_step TEXT DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             deleted_at DATETIME DEFAULT NULL
         )
@@ -110,20 +112,25 @@ db.serialize(() => {
         )
     `);
 
-        db.run(`
-        CREATE TABLE IF NOT EXISTS thoughts (
+    db.run(`
+        CREATE TABLE IF NOT EXISTS commitment_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            type TEXT NOT NULL,
-            content TEXT NOT NULL,
-            thread_id INTEGER,
-            why TEXT DEFAULT NULL,
-            next_step TEXT DEFAULT NULL,
+            commitment_id INTEGER NOT NULL,
+            event TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS future_answers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             deleted_at DATETIME DEFAULT NULL
         )
     `);
 
-    console.log('Database initialized with all 11 tables.');
+    console.log('Database initialized with all 12 tables.');
 });
 
 db.close();
