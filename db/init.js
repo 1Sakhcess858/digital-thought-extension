@@ -139,7 +139,7 @@ db.serialize(() => {
         )
     `);
 
-    db.run(`
+        db.run(`
         CREATE TABLE IF NOT EXISTS thought_links (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             from_id INTEGER NOT NULL,
@@ -149,7 +149,51 @@ db.serialize(() => {
         )
     `);
 
-    console.log('Database initialized with all 14 tables.');
+    db.run(`
+        CREATE TABLE IF NOT EXISTS life_areas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key TEXT UNIQUE,
+            name TEXT NOT NULL,
+            description TEXT,
+            color TEXT,
+            sort_order INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deleted_at DATETIME DEFAULT NULL
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS area_ratings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            area_id INTEGER NOT NULL,
+            rating INTEGER NOT NULL,
+            note TEXT,
+            recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS milestones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            area_id INTEGER NOT NULL,
+            year_index INTEGER NOT NULL,
+            text TEXT NOT NULL,
+            why TEXT,
+            status TEXT DEFAULT 'planned',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            completed_at DATETIME,
+            deleted_at DATETIME DEFAULT NULL
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS blueprint_meta (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    `);
+
+    console.log('Database initialized with all 18 tables.');
 });
 
 db.close();

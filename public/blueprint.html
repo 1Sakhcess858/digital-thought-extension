@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.T.E. — Blueprint</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="blueprint-body">
+    <header>
+        <h1>Blueprint</h1>
+        <p>A five-year design for your life</p>
+    </header>
+
+    <nav class="blueprint-nav">
+        <a href="/">Home</a>
+        <a href="/mind.html">Mind</a>
+        <a href="/threads.html">Threads</a>
+        <a href="/goals.html">Goals</a>
+        <a href="/future.html">Future Me</a>
+        <a href="/me.html">Me</a>
+        <a href="/identity.html">Identity</a>
+        <span class="nav-gap"></span>
+        <a href="/blueprint.html" class="active blueprint-link">Blueprint</a>
+    </nav>
+
+    <main class="blueprint-main">
+        <section class="bp-intro">
+            <h2>Site Survey</h2>
+            <p class="bp-hint">
+                Before you design where you are going, look honestly at where you are.
+                Rate each area of your life from 1 to 5. Add one line about it.
+            </p>
+            <p id="bpMeta" class="bp-meta"></p>
+        </section>
+
+        <section class="bp-survey" id="bpSurvey">
+            <div id="bpAreaList">Loading...</div>
+            <div class="bp-actions">
+                <button id="bpSaveButton">Save Survey</button>
+                <span id="bpFeedback" class="bp-feedback"></span>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/blueprint.js"></script>
+</body>
+</html>

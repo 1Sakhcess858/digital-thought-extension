@@ -899,3 +899,182 @@ button {
     border-radius: 4px;
     background: white;
 }
+
+/* ---------- Phase 9A: Blueprint Page ---------- */
+
+.blueprint-body {
+    background: #f7f6f2;
+}
+
+.blueprint-nav {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    padding: 12px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e2da;
+    align-items: center;
+}
+
+.blueprint-nav a {
+    padding: 6px 12px;
+    color: #555;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.95em;
+    transition: background 0.15s, color 0.15s;
+}
+
+.blueprint-nav a:hover {
+    background: #f1efe8;
+    color: #2a2a28;
+}
+
+.blueprint-nav a.active {
+    color: #5b7a5b;
+    font-weight: 600;
+}
+
+.blueprint-nav .nav-gap {
+    width: 16px;
+    height: 1px;
+}
+
+.blueprint-nav .blueprint-link {
+    color: #4a5c3c;
+    font-weight: 600;
+    border: 1px solid #c8d6bc;
+    padding: 5px 12px;
+    background: #eef2ea;
+}
+
+.blueprint-nav .blueprint-link:hover {
+    background: #d5e0cc;
+}
+
+.blueprint-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 16px 64px 16px;
+}
+
+.bp-intro {
+    margin-bottom: 28px;
+}
+
+.bp-intro h2 {
+    font-size: 1.5em;
+    margin: 0 0 8px 0;
+    color: #2a2a28;
+}
+
+.bp-hint {
+    color: #777;
+    font-size: 0.95em;
+    line-height: 1.55;
+    margin: 0 0 8px 0;
+}
+
+.bp-meta {
+    color: #5b7a5b;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.bp-survey {
+    display: block;
+}
+
+.bp-area {
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e5e2da;
+    border-left: 4px solid #7A7A7A;
+}
+
+.bp-area-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.bp-area-name {
+    font-weight: 600;
+    font-size: 1.05em;
+}
+
+.bp-area-last {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.bp-rating {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.bp-star {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    color: #666;
+    transition: all 0.1s;
+}
+
+.bp-star:hover {
+    background: #f1efe8;
+}
+
+.bp-star.filled {
+    background: #5b7a5b;
+    color: white;
+    border-color: #5b7a5b;
+}
+
+.bp-note {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 0.95em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.bp-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#bpSaveButton {
+    padding: 10px 20px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#bpSaveButton:hover {
+    background: #4a664a;
+}
+
+.bp-feedback {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0;
+}

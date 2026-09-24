@@ -22,6 +22,7 @@ const promptsRoute = require('./routes/prompts');
 const futureAnswersRoute = require('./routes/future-answers');
 const weeklyReviewsRoute = require('./routes/weekly-reviews');
 const identityRoute = require('./routes/identity');
+const lifeAreasRoute = require('./routes/life-areas');
 
 app.use('/api/thoughts', thoughtsRoute);
 app.use('/api/threads', threadsRoute);
@@ -35,6 +36,7 @@ app.use('/api/commitments', commitmentsRoute);
 app.use('/api/future-answers', futureAnswersRoute);
 app.use('/api/weekly-reviews', weeklyReviewsRoute);
 app.use('/api/identity', identityRoute);
+app.use('/api/life-areas', lifeAreasRoute);
 
 app.get('/api/status', (req, res) => {
     res.json({ status: 'D.T.E. is running' });
