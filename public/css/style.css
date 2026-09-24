@@ -858,3 +858,44 @@ button {
     font-size: 1.1em;
     margin-right: 4px;
 }
+
+/* ---------- Phase 6H: Thought Links ---------- */
+
+.thought-links {
+    margin: 6px 0 4px 0;
+    font-size: 0.85em;
+}
+
+.links-label {
+    color: #777;
+    margin-right: 6px;
+}
+
+.link-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 2px 4px 2px 0;
+    background: #eef2ea;
+    border: 1px solid #d5e0cc;
+    border-radius: 12px;
+    color: #4a664a;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.link-chip:hover {
+    background: #d5e0cc;
+}
+
+.edit-links {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 0.95em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}

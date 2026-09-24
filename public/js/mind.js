@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilter = '';
     let editingId = null;
     let originalData = null;
+    let linksByThoughtId = {};
 
     init();
     setupSearch();
@@ -44,15 +45,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadThoughts() {
-        fetch('/api/thoughts')
+        return fetch('/api/thoughts')
             .then(r => r.json())
             .then(thoughts => {
                 allThoughts = Array.isArray(thoughts) ? thoughts : [];
+                return loadAllLinks();
+            })
+            .then(() => {
                 renderFiltered();
             })
             .catch(() => {
                 thoughtsList.innerHTML = '<p>Server not responding.</p>';
             });
+    }
+
+    function loadAllLinks() {
+        // For each thought, fetch its outgoing links. Small scale: ~20 thoughts.
+        linksByThoughtId = {};
+        const promises = allThoughts.map(t =>
+            fetch('/api/thoughts/' + t.id + '/links')
+                .then(r => r.json())
+                .then(links => {
+                    linksByThoughtId[t.id] = Array.isArray(links) ? links : [];
+                })
+                .catch(() => { linksByThoughtId[t.id] = []; })
+        );
+        return Promise.all(promises);
     }
 
     function renderFiltered() {
@@ -83,6 +101,20 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<p class="thought-next-step"><span class="layer-label">next:</span> ${escapeHtml(thought.next_step)}</p>`
             : '';
 
+        const links = linksByThoughtId[thought.id] || [];
+        const linksHtml = links.length > 0
+            ? `
+                <div class="thought-links">
+                    <span class="links-label">Linked:</span>
+                    ${links.map(l => `
+                        <span class="link-chip" data-link-id="${l.id}" title="Click to open">
+                            #${l.id} ${escapeHtml(l.content).slice(0, 40)}${l.content.length > 40 ? '…' : ''}
+                        </span>
+                    `).join('')}
+                </div>
+            `
+            : '';
+
         return `
             <div class="thought-card" data-id="${thought.id}">
                 <span class="thought-type">${escapeHtml(thought.type)}</span>
@@ -90,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="thought-content">${escapeHtml(thought.content)}</p>
                 ${whyHtml}
                 ${stepHtml}
+                ${linksHtml}
                 <span class="thought-date">${escapeHtml(thought.created_at)}</span>
             </div>
         `;
@@ -106,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ))
             .join('');
 
+        const currentLinks = linksByThoughtId[thought.id] || [];
+        const linkIdsString = currentLinks.map(l => l.id).join(', ');
+
         return `
             <div class="thought-card editing" data-id="${thought.id}">
                 <select class="edit-type">${typeOptions}</select>
@@ -113,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <textarea class="edit-content">${escapeHtml(thought.content)}</textarea>
                 <textarea class="edit-why" placeholder="Why does this matter? (optional)">${escapeHtml(thought.why || '')}</textarea>
                 <textarea class="edit-next-step" placeholder="What will you do about it? (optional)">${escapeHtml(thought.next_step || '')}</textarea>
+                <input type="text" class="edit-links" placeholder="Link to thought IDs (comma-separated, e.g. 7, 12)" value="${escapeHtml(linkIdsString)}" />
                 <div class="edit-actions">
                     <button class="btn-save">Save</button>
                     <button class="btn-cancel">Cancel</button>
@@ -126,6 +163,23 @@ document.addEventListener('DOMContentLoaded', () => {
         thoughtsList.querySelectorAll('.thought-card').forEach(card => {
             if (card.classList.contains('editing')) return;
             card.addEventListener('click', () => onCardClick(card));
+        });
+
+        // Click a link chip to jump to that thought's edit form
+        thoughtsList.querySelectorAll('.link-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const targetId = parseInt(chip.dataset.linkId, 10);
+                if (editingId !== null) {
+                    if (hasUnsavedChanges()) {
+                        if (!confirm('You have unsaved changes. Discard them?')) return;
+                    }
+                    exitEditMode();
+                }
+                enterEditMode(targetId);
+                const target = thoughtsList.querySelector(`.thought-card[data-id="${targetId}"]`);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
         });
     }
 
@@ -197,12 +251,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const newThread = card.querySelector('.edit-thread').value;
         const newWhy = card.querySelector('.edit-why').value;
         const newStep = card.querySelector('.edit-next-step').value;
+        const newLinks = card.querySelector('.edit-links').value;
+        const originalLinks = (linksByThoughtId[originalData.id] || []).map(l => l.id).join(', ');
         return (
             newContent !== originalData.content ||
             newType !== originalData.type ||
             (parseInt(newThread, 10) || null) !== originalData.thread_id ||
             newWhy !== originalData.why ||
-            newStep !== originalData.next_step
+            newStep !== originalData.next_step ||
+            newLinks !== originalLinks
         );
     }
 
@@ -225,12 +282,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const thread_id = threadValue ? parseInt(threadValue, 10) : null;
         const why = card.querySelector('.edit-why').value.trim();
         const next_step = card.querySelector('.edit-next-step').value.trim();
+        const linksRaw = card.querySelector('.edit-links').value.trim();
 
         if (!content) {
             alert('Content cannot be empty.');
             return;
         }
 
+        // Parse the linked IDs
+        const desiredIds = linksRaw
+            ? linksRaw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isInteger(n))
+            : [];
+        if (desiredIds.includes(id)) {
+            alert('A thought cannot link to itself.');
+            return;
+        }
+
+        // First save the thought itself
         fetch(`/api/thoughts/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -248,6 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Error: ' + data.error);
                     return;
                 }
+
+                // Then sync links
+                return syncLinks(id, desiredIds);
+            })
+            .then(() => {
+                // Update originalData and return to display mode
                 const updated = {
                     id,
                     type,
@@ -262,7 +336,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 const idx = allThoughts.findIndex(t => t.id === id);
                 if (idx !== -1) allThoughts[idx] = updated;
-                card.outerHTML = cardFor(updated);
+
+                return fetch('/api/thoughts/' + id + '/links')
+                    .then(r => r.json())
+                    .then(links => {
+                        linksByThoughtId[id] = Array.isArray(links) ? links : [];
+                    });
+            })
+            .then(() => {
+                const card2 = thoughtsList.querySelector('.thought-card.editing');
+                if (card2) {
+                    card2.outerHTML = cardFor({
+                        id,
+                        type,
+                        content,
+                        created_at: originalData.created_at,
+                        thread_id,
+                        thread_title: thread_id
+                            ? (threads.find(t => t.id === thread_id) || {}).title || null
+                            : null,
+                        why: why || null,
+                        next_step: next_step || null
+                    });
+                }
                 editingId = null;
                 originalData = null;
                 attachHandlers();
@@ -270,6 +366,27 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {
                 alert('Server not responding.');
             });
+    }
+
+    function syncLinks(fromId, desiredToIds) {
+        const current = (linksByThoughtId[fromId] || []).map(l => l.id);
+        const toAdd = desiredToIds.filter(id => !current.includes(id));
+        const toRemove = current.filter(id => !desiredToIds.includes(id));
+
+        const adds = toAdd.map(toId =>
+            fetch('/api/thoughts/' + fromId + '/links', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to_id: toId })
+            }).then(r => r.json())
+        );
+
+        const removes = toRemove.map(toId =>
+            fetch('/api/thoughts/' + fromId + '/links/' + toId, { method: 'DELETE' })
+                .then(r => r.json())
+        );
+
+        return Promise.all(adds.concat(removes));
     }
 
     function deleteThought(id) {
@@ -288,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 editingId = null;
                 originalData = null;
                 allThoughts = allThoughts.filter(t => t.id !== id);
+                delete linksByThoughtId[id];
                 if (!thoughtsList.querySelector('.thought-card')) {
                     thoughtsList.innerHTML = '<p>No thoughts yet. Start capturing.</p>';
                 }

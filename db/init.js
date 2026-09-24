@@ -130,7 +130,7 @@ db.serialize(() => {
         )
     `);
 
-    db.run(`
+       db.run(`
         CREATE TABLE IF NOT EXISTS weekly_reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
@@ -139,7 +139,17 @@ db.serialize(() => {
         )
     `);
 
-    console.log('Database initialized with all 13 tables.');
+    db.run(`
+        CREATE TABLE IF NOT EXISTS thought_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            from_id INTEGER NOT NULL,
+            to_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(from_id, to_id)
+        )
+    `);
+
+    console.log('Database initialized with all 14 tables.');
 });
 
 db.close();

@@ -9,3 +9,4 @@ migrate-commitments.js
 migrate-thoughts-socratic.js
 migrate-future-answers.js
 migrate-weekly-reviews.js
+migrate-thought-links.js

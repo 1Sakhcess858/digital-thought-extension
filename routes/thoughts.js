@@ -186,4 +186,75 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+// GET: List links for a thought (outgoing)
+router.get('/:id/links', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'Invalid thought id.' });
+    }
+
+    const sql = `
+        SELECT t.id, t.type, t.content, t.thread_id, t.created_at
+        FROM thought_links l
+        JOIN thoughts t ON t.id = l.to_id
+        WHERE l.from_id = ? AND t.deleted_at IS NULL
+        ORDER BY l.created_at DESC
+    `;
+    db.all(sql, [id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// POST: Create a link from :id to { to_id }
+router.post('/:id/links', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'Invalid thought id.' });
+    }
+
+    const toId = parseInt(req.body.to_id, 10);
+    if (!Number.isInteger(toId)) {
+        return res.status(400).json({ error: 'to_id is required and must be a number.' });
+    }
+    if (toId === id) {
+        return res.status(400).json({ error: 'A thought cannot link to itself.' });
+    }
+
+    // Confirm both thoughts exist and are not deleted
+    db.get('SELECT id FROM thoughts WHERE id = ? AND deleted_at IS NULL', [id], (err1, fromRow) => {
+        if (err1) return res.status(500).json({ error: err1.message });
+        if (!fromRow) return res.status(404).json({ error: 'Source thought not found.' });
+
+        db.get('SELECT id FROM thoughts WHERE id = ? AND deleted_at IS NULL', [toId], (err2, toRow) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            if (!toRow) return res.status(404).json({ error: 'Target thought not found.' });
+
+            const sql = 'INSERT OR IGNORE INTO thought_links (from_id, to_id) VALUES (?, ?)';
+            db.run(sql, [id, toId], function (err3) {
+                if (err3) return res.status(500).json({ error: err3.message });
+                res.json({ from_id: id, to_id: toId, created: this.changes > 0 });
+            });
+        });
+    });
+});
+
+// DELETE: Remove a link
+router.delete('/:id/links/:toId', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const toId = parseInt(req.params.toId, 10);
+    if (!Number.isInteger(id) || !Number.isInteger(toId)) {
+        return res.status(400).json({ error: 'Invalid ids.' });
+    }
+
+    const sql = 'DELETE FROM thought_links WHERE from_id = ? AND to_id = ?';
+    db.run(sql, [id, toId], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Link not found.' });
+        }
+        res.json({ deleted: true, from_id: id, to_id: toId });
+    });
+});
+
 module.exports = router;
