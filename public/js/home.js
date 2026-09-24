@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fiveYearSnippet = document.getElementById('fiveYearSnippet');
     const fiveYearText = document.getElementById('fiveYearText');
     const fiveYearAge = document.getElementById('fiveYearAge');
+    const weeklyReviewSection = document.getElementById('weeklyReviewSection');
+    const weeklyReviewAge = document.getElementById('weeklyReviewAge');
+    const weeklyReviewSample = document.getElementById('weeklyReviewSample');
+    const weeklyReviewInput = document.getElementById('weeklyReviewInput');
+    const weeklyReviewSaveButton = document.getElementById('weeklyReviewSaveButton');
+    const weeklyReviewDismissButton = document.getElementById('weeklyReviewDismissButton');
+    const weeklyReviewFeedback = document.getElementById('weeklyReviewFeedback');
     const echoDisplay = document.getElementById('echoDisplay');
     const activeThreadDisplay = document.getElementById('activeThreadDisplay');
     const reflectionInput = document.getElementById('reflectionInput');
@@ -266,6 +273,120 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ---------- weekly review ----------
+
+    let dismissedThisSession = false;
+
+    function checkWeeklyReview() {
+        if (dismissedThisSession) return;
+        fetch('/api/weekly-reviews/status')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.due) {
+                    if (weeklyReviewSection) weeklyReviewSection.style.display = 'none';
+                    return;
+                }
+                if (weeklyReviewSection) weeklyReviewSection.style.display = 'block';
+                if (weeklyReviewAge) {
+                    if (data.daysSinceLast === null) {
+                        weeklyReviewAge.textContent = 'No previous review. This is your first.';
+                    } else {
+                        weeklyReviewAge.textContent = 'It has been ' + data.daysSinceLast + ' days since your last review.';
+                    }
+                }
+                loadWeeklySample();
+            })
+            .catch(() => {
+                if (weeklyReviewSection) weeklyReviewSection.style.display = 'none';
+            });
+    }
+
+    function loadWeeklySample() {
+        fetch('/api/weekly-reviews/sample')
+            .then(r => r.json())
+            .then(sample => {
+                if (!weeklyReviewSample) return;
+                const parts = [];
+
+                if (sample.thoughts && sample.thoughts.length > 0) {
+                    parts.push('<h4>Recent thoughts</h4>');
+                    sample.thoughts.forEach(t => {
+                        parts.push('<p class="sample-line">· ' + escapeHtml(t.content) + '</p>');
+                    });
+                }
+                if (sample.commitment) {
+                    parts.push('<h4>An open commitment</h4>');
+                    parts.push('<p class="sample-line">· ' + escapeHtml(sample.commitment.text) + '</p>');
+                    if (sample.commitment.why) {
+                        parts.push('<p class="sample-line sample-sub">why: ' + escapeHtml(sample.commitment.why) + '</p>');
+                    }
+                }
+                if (sample.promptResponse) {
+                    parts.push('<h4>A prompt answer</h4>');
+                    parts.push('<p class="sample-line sample-sub">Q: ' + escapeHtml(sample.promptResponse.prompt_text) + '</p>');
+                    parts.push('<p class="sample-line">A: ' + escapeHtml(sample.promptResponse.response) + '</p>');
+                }
+                if (sample.echo) {
+                    parts.push('<h4>An Echo</h4>');
+                    parts.push('<p class="sample-line">' + escapeHtml(sample.echo.content) + '</p>');
+                }
+                if (sample.why) {
+                    parts.push('<h4>Your WHY</h4>');
+                    parts.push('<p class="sample-line">' + escapeHtml(sample.why).replace(/\n/g, '<br>') + '</p>');
+                }
+                if (sample.fiveYear) {
+                    parts.push('<h4>Your five-year answer</h4>');
+                    parts.push('<p class="sample-line">' + escapeHtml(sample.fiveYear.text) + '</p>');
+                }
+
+                weeklyReviewSample.innerHTML = parts.join('') || '<p>No content to show yet.</p>';
+            })
+            .catch(() => {
+                if (weeklyReviewSample) weeklyReviewSample.innerHTML = '<p>Could not load sample.</p>';
+            });
+    }
+
+    if (weeklyReviewSaveButton) {
+        weeklyReviewSaveButton.addEventListener('click', () => {
+            const content = weeklyReviewInput.value.trim();
+            if (!content) {
+                weeklyReviewFeedback.textContent = 'Write something first, or press Not now.';
+                weeklyReviewFeedback.style.color = '#b33';
+                return;
+            }
+            fetch('/api/weekly-reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        weeklyReviewFeedback.textContent = 'Error: ' + data.error;
+                        weeklyReviewFeedback.style.color = '#b33';
+                        return;
+                    }
+                    weeklyReviewFeedback.textContent = 'Review saved. See you next week.';
+                    weeklyReviewFeedback.style.color = '#2a7d2a';
+                    weeklyReviewInput.value = '';
+                    setTimeout(() => {
+                        if (weeklyReviewSection) weeklyReviewSection.style.display = 'none';
+                    }, 1500);
+                })
+                .catch(() => {
+                    weeklyReviewFeedback.textContent = 'Server not responding.';
+                    weeklyReviewFeedback.style.color = '#b33';
+                });
+        });
+    }
+
+    if (weeklyReviewDismissButton) {
+        weeklyReviewDismissButton.addEventListener('click', () => {
+            dismissedThisSession = true;
+            if (weeklyReviewSection) weeklyReviewSection.style.display = 'none';
+        });
+    }
+
     // ---------- five-year snippet ----------
 
     function loadFiveYearSnippet() {
@@ -442,6 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setGreeting();
     loadMoment();
+    checkWeeklyReview();
     loadCommitments();
     loadWhy();
     loadFiveYearSnippet();

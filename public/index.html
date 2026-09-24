@@ -22,11 +22,7 @@
     </nav>
 
     <main>
-        <section class="greeting">
-            <h2 id="greetingText">Hello.</h2>
-        </section>
-
-        <section class="moment" id="momentSection">
+               <section class="moment" id="momentSection">
             <h2>Moment</h2>
             <p id="momentPrompt">Loading...</p>
             <textarea id="momentInput" placeholder="Your answer..."></textarea>
@@ -35,6 +31,19 @@
                 <button id="momentSkipButton">Skip for now</button>
             </div>
             <p id="momentFeedback"></p>
+        </section>
+
+        <section class="weekly-review" id="weeklyReviewSection" style="display:none;">
+            <h2>Weekly Review</h2>
+            <p id="weeklyReviewAge" class="hint"></p>
+            <div id="weeklyReviewSample" class="weekly-sample">Loading...</div>
+            <p class="weekly-question">What did this week teach you?</p>
+            <textarea id="weeklyReviewInput" placeholder="Write your weekly review..."></textarea>
+            <div class="weekly-actions">
+                <button id="weeklyReviewSaveButton">Save Review</button>
+                <button id="weeklyReviewDismissButton">Not now</button>
+            </div>
+            <p id="weeklyReviewFeedback"></p>
         </section>
 
         <section class="commitments" id="commitmentsSection">

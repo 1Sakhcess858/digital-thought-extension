@@ -9,10 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const promptsEditor = document.getElementById('promptsEditor');
     const togglePromptEditor = document.getElementById('togglePromptEditor');
     const filterButtons = document.querySelectorAll('.filter-btn');
+    const weeklyReviewsHistory = document.getElementById('weeklyReviewsHistory');
 
     let currentBucket = '';
-
-    // ---------- echoes ----------
 
     function loadEchoes() {
         fetch('/api/echoes')
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     echoesList.innerHTML = '<p>No Echoes yet.</p>';
                     return;
                 }
-
                 echoesList.innerHTML = echoes.map(echo => `
                     <div class="thought-card">
                         <p class="thought-content">${escapeHtml(echo.content)}</p>
@@ -38,13 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (echoSaveButton) {
         echoSaveButton.addEventListener('click', () => {
             const content = echoInput.value.trim();
-
             if (!content) {
                 echoFeedback.textContent = 'Please write something first.';
                 echoFeedback.style.color = '#b33';
                 return;
             }
-
             fetch('/api/echoes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -69,8 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---------- prompts history ----------
-
     function loadPromptHistory() {
         const url = currentBucket
             ? '/api/prompts/responses?bucket=' + currentBucket
@@ -83,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     promptsHistory.innerHTML = '<p>No prompt responses yet. Answer a prompt on Home.</p>';
                     return;
                 }
-
                 promptsHistory.innerHTML = responses.map(renderResponse).join('');
             })
             .catch(() => {
@@ -105,8 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // ---------- filter buttons ----------
-
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             filterButtons.forEach(b => b.classList.remove('active'));
@@ -115,8 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadPromptHistory();
         });
     });
-
-    // ---------- prompts editor ----------
 
     if (togglePromptEditor) {
         togglePromptEditor.addEventListener('click', () => {
@@ -205,7 +194,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---------- helpers ----------
+    // ---------- weekly reviews history ----------
+
+    function loadWeeklyReviewsHistory() {
+        if (!weeklyReviewsHistory) return;
+        fetch('/api/weekly-reviews')
+            .then(r => r.json())
+            .then(reviews => {
+                if (!Array.isArray(reviews) || reviews.length === 0) {
+                    weeklyReviewsHistory.innerHTML = '<p>No weekly reviews yet. Answer one on Home.</p>';
+                    return;
+                }
+                weeklyReviewsHistory.innerHTML = reviews.map(renderWeeklyReview).join('');
+            })
+            .catch(() => {
+                weeklyReviewsHistory.innerHTML = '<p>Server not responding.</p>';
+            });
+    }
+
+    function renderWeeklyReview(r) {
+        return `
+            <div class="thought-card weekly-review-card">
+                <p class="thought-content">${escapeHtml(r.content)}</p>
+                <span class="thought-date">${escapeHtml(r.created_at)}</span>
+            </div>
+        `;
+    }
 
     function escapeHtml(text) {
         const div = document.createElement('div');
@@ -213,8 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     }
 
-    // ---------- boot ----------
-
     loadEchoes();
     loadPromptHistory();
+    loadWeeklyReviewsHistory();
 });

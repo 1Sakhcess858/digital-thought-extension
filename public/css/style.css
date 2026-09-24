@@ -611,3 +611,122 @@ button {
     font-size: 0.85em;
     color: #888;
 }
+
+/* ---------- Phase 6F: Weekly Review ---------- */
+
+.weekly-review {
+    background: #fdfcf7;
+    border: 1px solid #d8d8d0;
+}
+
+.weekly-review .hint {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.weekly-sample {
+    background: #f5f5ef;
+    border-left: 3px solid #5b7a5b;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+.weekly-sample h4 {
+    margin: 12px 0 4px 0;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #5b7a5b;
+}
+
+.weekly-sample h4:first-child {
+    margin-top: 0;
+}
+
+.sample-line {
+    margin: 2px 0;
+    font-size: 0.95em;
+    color: #2a2a28;
+    line-height: 1.5;
+}
+
+.sample-line.sample-sub {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.weekly-question {
+    font-weight: 600;
+    margin: 12px 0 6px 0;
+    color: #2a2a28;
+}
+
+#weeklyReviewInput {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 6px 0;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.weekly-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+#weeklyReviewSaveButton {
+    padding: 8px 16px;
+    background: #5b7a5b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+#weeklyReviewSaveButton:hover {
+    background: #4a664a;
+}
+
+#weeklyReviewDismissButton {
+    padding: 8px 16px;
+    background: transparent;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+#weeklyReviewDismissButton:hover {
+    background: #f1efe8;
+}
+
+/* ---------- Phase 6F: Weekly Review History ---------- */
+
+.weekly-reviews-history .hint {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.weekly-review-card {
+    border-left: 3px solid #5b7a5b;
+    padding-left: 12px;
+    margin-bottom: 12px;
+}
+
+.weekly-review-card .thought-content {
+    font-size: 1em;
+    line-height: 1.6;
+}
